@@ -14,22 +14,24 @@ import java.time.LocalTime;
 
 public class SlidingTimeWindowTest {
 
+    volatile boolean check = true;
     @Test
     public void test() {
         SlidingTimeWindow slidingTimeWindow = new SlidingTimeWindow(1000,10);
+
         Thread checkThread = new Thread(() -> {
-            while (true){
+            while (check){
                 int count = slidingTimeWindow.currentWindowCount();
                 System.out.println(LocalTime.now().toString() + ">>>window count:" + count);
                 sleep(10);
             }
         });
         checkThread.start();
-        while (true){
+        for (int i = 0; i < 2000; i++) {
             slidingTimeWindow.incrBy(1);
             sleep(1);
         }
-
+        check = false;
     }
 
     private static void sleep(long millis){
