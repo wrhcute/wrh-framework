@@ -6,6 +6,8 @@ public class ManyKeyMap<SK,V> implements Map<ManyKeyMap.ManyKey<SK>,V> {
 
     private List<V> values = new ArrayList<>();
 
+    private List<ManyKey<SK>> keys = new ArrayList<>();
+
     @Override
     public int size() {
         return values.size();
@@ -69,6 +71,17 @@ public class ManyKeyMap<SK,V> implements Map<ManyKeyMap.ManyKey<SK>,V> {
     public static class ManyKey<SK> {
         private List<SK> keys = new ArrayList<>();
 
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            ManyKey<?> manyKey = (ManyKey<?>) o;
+            return Objects.equals(keys, manyKey.keys);
+        }
 
+        @Override
+        public int hashCode() {
+            return Objects.hash(keys);
+        }
     }
 }
