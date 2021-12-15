@@ -1,19 +1,19 @@
 package io.github.wrhcute.utils;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class ManyKeyMap<SK,V> implements Map<ManyKeyMap.ManyKey<SK>,V> {
 
+    private List<V> values = new ArrayList<>();
+
     @Override
     public int size() {
-        return 0;
+        return values.size();
     }
 
     @Override
     public boolean isEmpty() {
-        return false;
+        return values.isEmpty();
     }
 
     @Override
@@ -67,6 +67,8 @@ public class ManyKeyMap<SK,V> implements Map<ManyKeyMap.ManyKey<SK>,V> {
     }
 
     public static class ManyKey<SK> {
+        private List<SK> keys = new ArrayList<>();
+
 
     }
 }
