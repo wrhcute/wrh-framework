@@ -21,16 +21,20 @@ public abstract class ReflectionUtil {
         }
     }
 
-    public static <T> T getDeclaredFieldValue(Class<?> clazz,String fieldName,Object param){
+    public static <T> T getDeclaredFieldValue(Class<?> clazz,String fieldName,Object callObj){
         final Field f = getDeclaredField(clazz, fieldName);
-        return getFieldValue(f,param);
+        return getFieldValue(f,callObj);
+    }
+
+    public static <T> T getDeclaredStaticFieldValue(Class<?> clazz ,String fieldName){
+        return getDeclaredFieldValue(clazz,fieldName,null);
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> T getFieldValue(Field field,Object param){
+    public static <T> T getFieldValue(Field field,Object callObj){
         try {
             field.setAccessible(true);
-            return (T) field.get(param);
+            return (T) field.get(callObj);
         } catch (IllegalAccessException e) {
             throw ExceptionUtil.toRuntime(e);
         }
