@@ -40,7 +40,7 @@ public class IgnoreDuplicatesList<E> implements java.util.List<E>{
 
     @Override
     public <T> T[] toArray(T[] a) {
-        return null;
+        return null ;
     }
 
     @Override
