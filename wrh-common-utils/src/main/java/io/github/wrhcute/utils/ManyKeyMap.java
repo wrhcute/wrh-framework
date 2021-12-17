@@ -4,9 +4,9 @@ import java.util.*;
 
 public class ManyKeyMap<SK,V> implements Map<ManyKeyMap.ManyKey<SK>,V> {
 
-    private List<V> values = new ArrayList<>();
+    private final DistinctList<V> values = new DistinctList<>();
 
-    private List<ManyKey<SK>> keys = new ArrayList<>();
+    private final Map<SK,Integer> keys = new HashMap<>();
 
     @Override
     public int size() {
@@ -20,21 +20,25 @@ public class ManyKeyMap<SK,V> implements Map<ManyKeyMap.ManyKey<SK>,V> {
 
     @Override
     public boolean containsKey(Object key) {
-        return false;
+        return keys.containsKey(key);
     }
 
     @Override
     public boolean containsValue(Object value) {
-        return false;
+        return values.contains(value);
     }
 
     @Override
     public V get(Object key) {
-        return null;
+        Integer vIdx = keys.get(key);
+        return  vIdx == null ? null : values.get(vIdx);
     }
 
     @Override
     public V put(ManyKey<SK> key, V value) {
+        if (values.contains(value)){
+
+        }
         return null;
     }
 
@@ -50,7 +54,8 @@ public class ManyKeyMap<SK,V> implements Map<ManyKeyMap.ManyKey<SK>,V> {
 
     @Override
     public void clear() {
-
+        this.values.clear();
+        this.keys.clear();
     }
 
     @Override
@@ -69,7 +74,7 @@ public class ManyKeyMap<SK,V> implements Map<ManyKeyMap.ManyKey<SK>,V> {
     }
 
     public static class ManyKey<SK> {
-        private List<SK> keys = new ArrayList<>();
+        private TreeSet<SK> keys = new TreeSet<>();
 
         @Override
         public boolean equals(Object o) {
