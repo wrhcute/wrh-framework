@@ -29,4 +29,8 @@ public abstract class Asserts {
     public static void isNull(Object obj , String message){
         isTrue(obj == null , new RuntimeException(message));
     }
+
+    public static void isTrue(boolean expression,String message){
+        isTrue(expression,new RuntimeException(message));
+    }
 }
