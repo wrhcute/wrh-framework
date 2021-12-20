@@ -40,7 +40,7 @@ public class BitsTest {
     }
 
     @Test
-    public void test(){
-        System.out.println(1 >>> 16);
+    public void messyHash_test(){
+        System.out.println(Bits.messyHash("100100000001L"));
     }
 }
