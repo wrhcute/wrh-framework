@@ -18,6 +18,10 @@ public abstract class Asserts {
         isTrue(!expression,ex);
     }
 
+    public static void isFalse(boolean expression, String message){
+        isFalse(expression,new RuntimeException(message));
+    }
+
     public static void notNull(Object obj , String message){
         isTrue(obj != null , new RuntimeException(message));
     }
