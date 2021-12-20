@@ -11,7 +11,8 @@ public abstract class Bits {
 
     //传入数值是否为2的幂次方数
     public static boolean isPowerOf2(int num) {
-        return num != 1 && (num & (num - 1)) == 0;
+        int abs = Math.abs(num);
+        return abs != 1 && (abs & (abs - 1)) == 0;
     }
 
 }
