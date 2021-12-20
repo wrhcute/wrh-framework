@@ -26,10 +26,11 @@ public class BiSortTree<S extends Comparable<S>, D> {
         this(s,data,null,0);
     }
 
-    private BiSortTree(S s,D data,BiSortTree parent, int h){
+    private BiSortTree(S s,D data,BiSortTree<S,D> parent, int h){
         this.s = s;
         this.data = data;
         this.h = h;
+        this.parent = parent;
     }
 
 
@@ -51,23 +52,19 @@ public class BiSortTree<S extends Comparable<S>, D> {
 
     public void put(S leaf,D data){
         int compare = this.s.compareTo(leaf);
-        if (compare >= 0){
+        if (compare > 0){
             if (this.left == null)
                 this.left = new BiSortTree<>(leaf,data,this,h + 1);
             else
-                this.left.put(leaf,data,this);
-        }else{
+                this.left.put(leaf,data);
+        }else if (compare < 0){
             if (this.right == null)
                 this.right = new BiSortTree<>(leaf,data,this, h + 1);
             else
-                this.right.put(leaf,data,this);
+                this.right.put(leaf,data);
+        }else{
+            this.data = data;
         }
-
-    }
-
-    protected void put(S leaf,D data,BiSortTree<S,D> parent){
-        this.parent = parent;
-        put(leaf,data);
     }
 
     public BiSortTree<S,D> searchTree(S s){
