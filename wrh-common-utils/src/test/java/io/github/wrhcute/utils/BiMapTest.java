@@ -14,5 +14,12 @@ public class BiMapTest {
 
         Integer id = nameIdMap.get("wrh");
         nameIdMap.remove("wrh");
+        nameIdMap.put("wrh",19);
+        nameIdMap.put("kkk",19);
+
+        Integer wrh = nameIdMap.get("wrh");
+        System.out.println("wrh");
+        String rget = nameIdMap.rget(19);
+        System.out.println(rget);
     }
 }

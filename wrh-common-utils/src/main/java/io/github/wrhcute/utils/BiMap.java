@@ -10,26 +10,25 @@ import java.util.*;
  * @createTime 2021年12月20日 10:57:00
  */
 @SuppressWarnings("unchecked")
-public class BiMap<L extends Comparable<L>,R extends Comparable<R>> implements Map<L,R> {
+public class BiMap<L extends Comparable<L>, R extends Comparable<R>> implements Map<L, R> {
 
     private int capacity;
 
-    private BiSortTree<L,Entry<L,R>>[] l2rBucket;
+    private BiSortTree<L, Entry<L, R>>[] l2rBucket;
 
-    private BiSortTree<R,Entry<L,R>>[] r2lBucket;
+    private BiSortTree<R, Entry<L, R>>[] r2lBucket;
 
-    private Set<Entry<L,R>> entrySet = new HashSet<>();
+    private Set<Entry<L, R>> entrySet = new HashSet<>();
     private Set<L> keys = new HashSet<>();
     private Set<R> values = new HashSet<>();
 
 
-
-    public BiMap(){
+    public BiMap() {
         this(256);
     }
 
-    public BiMap(int capacity){
-        Asserts.isTrue(Bits.isPowerOf2(capacity),"capacity必需为2的幂次方数");
+    public BiMap(int capacity) {
+        Asserts.isTrue(Bits.isPowerOf2(capacity), "capacity必需为2的幂次方数");
         this.capacity = capacity;
         this.l2rBucket = new BiSortTree[capacity];
         this.r2lBucket = new BiSortTree[capacity];
@@ -47,47 +46,54 @@ public class BiMap<L extends Comparable<L>,R extends Comparable<R>> implements M
 
     @Override
     public boolean containsKey(Object key) {
-        return leftSearch(key) != null;
+        return keys.contains(key);
     }
 
     @Override
     public boolean containsValue(Object value) {
-        return rightSearch(value) != null;
+        return values.contains(value);
     }
 
     @Override
     public R get(Object key) {
-        BiSortTree<L, R> node = leftSearch(key);
-        return node == null ? null : node.getData();
+        Entry<L, R> entry = search(l2rBucket, (L) key);
+        return entry == null ? null : entry.getValue();
     }
 
-    public L rget(R r){
-        BiSortTree<R, L> node = rightSearch(r);
-        return node == null ? null : node.getData();
+    public L rget(R r) {
+        Entry<L, R> entry = search(r2lBucket, r);
+        return entry == null ? null : entry.getKey();
     }
 
     @Override
     public R put(L l, R r) {
-        int lMod = Bits.hashMod(l,capacity) , rMod = Bits.hashMod(r,capacity);
-        BiSortTree<L, Entry<L,R>> lrTree = l2rBucket[lMod];
-        Entry<L,R> newEntry;
-        if (lrTree == null){
-            newEntry = new SimpleEntry(l,r);
-            lrTree = new BiSortTree<>(l,newEntry);
+        int lMod = Bits.hashMod(l, capacity), rMod = Bits.hashMod(r, capacity);
+        BiSortTree<L, Entry<L, R>> lrTree = l2rBucket[lMod];
+        Entry<L, R> newEntry = new SimpleEntry(l, r);
+        if (lrTree == null) {
+            lrTree = new BiSortTree<>(l, newEntry);
             l2rBucket[lMod] = lrTree;
-        }else{
-            BiSortTree<L, Entry<L, R>> newNode = lrTree.put(l, new SimpleEntry(l,r));
-
+        } else {
+            Entry<L, R> old = lrTree.put(l, newEntry);
+            if (old != null) {
+                entrySet.remove(old);
+            }
         }
-        BiSortTree<R, L> rlTree = r2lBucket[rMod];
-        if (rlTree == null){
-            rlTree = new BiSortTree<>(r,l);
+        BiSortTree<R, Entry<L, R>> rlTree = r2lBucket[rMod];
+        if (rlTree == null) {
+            rlTree = new BiSortTree<>(r, newEntry);
             r2lBucket[rMod] = rlTree;
-        }else{
-            rlTree.put(r,l);
+        } else {
+            Entry<L, R> old = rlTree.put(r, newEntry);
+            if (old != null) {
+                entrySet.remove(old);
+                if (!old.getKey().equals(l)){
+                    //todo
+
+                }
+            }
         }
-        Entry<L,R> entry = new SimpleEntry(l, r);
-        entrySet.add(entry);
+        entrySet.add(newEntry);
         keys.add(l);
         values.add(r);
         return r;
@@ -95,41 +101,20 @@ public class BiMap<L extends Comparable<L>,R extends Comparable<R>> implements M
 
     @Override
     public R remove(Object key) {
-        L l = (L) key;
-        int mod = Bits.hashMod(key, capacity);
-        BiSortTree<L, R> root = l2rBucket[mod];
-        R r;
-        if (root != null){
-            if (root.getS().equals(l)){
-                l2rBucket[mod] = null;
-                r = root.getData();
-            }else{
-                r = root.remove(l);
-                if (r != null){
-                    int heMod = Bits.hashMod(r, capacity);
-                    BiSortTree<R, L> he = r2lBucket[heMod];
-                    if (he != null){
-                        if (he.getS().equals(r)) {
-                            r2lBucket[heMod] = null;
-                        }else{
-                            he.remove(r);
-                        }
-                    }
-                    values.remove(r);
-                }
-            }
-        }else{
-            r = null;
-        }
-        keys.remove(l);
-        return r;
+        Entry<L, R> removed = remove0(l2rBucket, r2lBucket, this,(L) key);
+        return removed == null ? null : removed.getValue();
+    }
+
+    public L rdel(R r){
+        Entry<L, R> removed = remove0(r2lBucket, l2rBucket,this, r);
+        return removed == null ? null : removed.getKey();
     }
 
     @Override
     public void putAll(Map<? extends L, ? extends R> m) {
         for (L l : m.keySet()) {
             R r = m.get(l);
-            put(l,r);
+            put(l, r);
         }
     }
 
@@ -158,23 +143,45 @@ public class BiMap<L extends Comparable<L>,R extends Comparable<R>> implements M
     }
 
 
-    private BiSortTree<L, R> leftSearch(Object left){
-        int mod = Bits.hashMod(left, capacity);
-        BiSortTree<L, R> tree = l2rBucket[mod];
-        return tree.searchTree((L) left);
+    private static <S extends Comparable<S>,K,V> Entry<K,V> search(BiSortTree<S, Entry<K, V>>[] bucket,S s){
+        int mod = Bits.hashMod(s, bucket.length);
+        BiSortTree<S, Entry<K, V>> root = bucket[mod];
+        return root.search(s);
+    }
+
+    private static <S1 extends Comparable<S1>
+            ,S2 extends Comparable<S2>
+            ,K extends Comparable<K>
+            ,V extends Comparable<V>> Entry<K,V> remove0(
+            BiSortTree<S1, Entry<K, V>>[] bucket,
+            BiSortTree<S2, Entry<K, V>>[] opposite,
+            BiMap<K,V> $this,
+            S1 s){
+        int mod = Bits.hashMod(s, bucket.length);
+        BiSortTree<S1, Entry<K, V>> root = bucket[mod];
+        if (root == null)
+            return null;
+        Entry<K,V> entry;
+        if (root.getS().equals(s)){
+            //刚好在头结点
+            bucket[mod] = null;
+            entry =  root.getData();
+        }else{
+            entry = root.remove(s);
+        }
+        if (entry != null){
+            $this.keys.remove(entry.getKey());
+            $this.values.remove(entry.getValue());
+            $this.entrySet.remove(entry);
+            remove0(opposite,bucket,$this,(S2) entry.getValue());
+        }
+        return entry;
     }
 
 
-    private BiSortTree<R, L> rightSearch(Object right){
-        int mod = Bits.hashMod(right, capacity);
-        BiSortTree<R, L> tree = r2lBucket[mod];
-        return tree.searchTree((R) right);
-    }
+    public class SimpleEntry implements Entry<L, R> {
 
-
-    public  class SimpleEntry implements Entry<L, R> {
-
-        SimpleEntry(L key ,R value){
+        SimpleEntry(L key, R value) {
             this.key = key;
             this.value = value;
         }
