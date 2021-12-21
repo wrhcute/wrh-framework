@@ -50,20 +50,29 @@ public class BiSortTree<S extends Comparable<S>, D> {
         return data;
     }
 
-    public void put(S leaf,D data){
+    /**
+     *
+     * @param leaf
+     * @param data
+     * @return 如果新建节点则返回新建的节点,没有新建则更新节点,返回null
+     */
+    public BiSortTree<S, D> put(S leaf,D data){
         int compare = this.s.compareTo(leaf);
         if (compare > 0){
-            if (this.left == null)
+            if (this.left == null){
                 this.left = new BiSortTree<>(leaf,data,this,h + 1);
-            else
-                this.left.put(leaf,data);
+                return this.left;
+            }else
+                return this.left.put(leaf,data);
         }else if (compare < 0){
-            if (this.right == null)
-                this.right = new BiSortTree<>(leaf,data,this, h + 1);
-            else
-                this.right.put(leaf,data);
+            if (this.right == null) {
+                this.right = new BiSortTree<>(leaf, data, this, h + 1);
+                return this.right;
+            }else
+                return this.right.put(leaf,data);
         }else{
             this.data = data;
+            return null;
         }
     }
 

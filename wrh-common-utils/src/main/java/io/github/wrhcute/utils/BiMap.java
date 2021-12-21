@@ -1,9 +1,6 @@
 package io.github.wrhcute.utils;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author 王瑞鸿
@@ -17,9 +14,9 @@ public class BiMap<L extends Comparable<L>,R extends Comparable<R>> implements M
 
     private int capacity;
 
-    private BiSortTree<L,R>[] l2rBucket;
+    private BiSortTree<L,Entry<L,R>>[] l2rBucket;
 
-    private BiSortTree<R,L>[] r2lBucket;
+    private BiSortTree<R,Entry<L,R>>[] r2lBucket;
 
     private Set<Entry<L,R>> entrySet = new HashSet<>();
     private Set<L> keys = new HashSet<>();
@@ -72,12 +69,15 @@ public class BiMap<L extends Comparable<L>,R extends Comparable<R>> implements M
     @Override
     public R put(L l, R r) {
         int lMod = Bits.hashMod(l,capacity) , rMod = Bits.hashMod(r,capacity);
-        BiSortTree<L, R> lrTree = l2rBucket[lMod];
+        BiSortTree<L, Entry<L,R>> lrTree = l2rBucket[lMod];
+        Entry<L,R> newEntry;
         if (lrTree == null){
-            lrTree = new BiSortTree<>(l,r);
+            newEntry = new SimpleEntry(l,r);
+            lrTree = new BiSortTree<>(l,newEntry);
             l2rBucket[lMod] = lrTree;
         }else{
-            lrTree.put(l,r);
+            BiSortTree<L, Entry<L, R>> newNode = lrTree.put(l, new SimpleEntry(l,r));
+
         }
         BiSortTree<R, L> rlTree = r2lBucket[rMod];
         if (rlTree == null){
@@ -199,5 +199,17 @@ public class BiMap<L extends Comparable<L>,R extends Comparable<R>> implements M
             return old;
         }
 
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            SimpleEntry that = (SimpleEntry) o;
+            return Objects.equals(key, that.key) && Objects.equals(value, that.value);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(key, value);
+        }
     }
 }
