@@ -16,6 +16,7 @@ public class BiMapTest {
         nameIdMap.remove("wrh");
         nameIdMap.put("wrh",19);
         nameIdMap.put("kkk",19);
+        nameIdMap.put("ccc",19);
 
         Integer wrh = nameIdMap.get("wrh");
         System.out.println("wrh");
