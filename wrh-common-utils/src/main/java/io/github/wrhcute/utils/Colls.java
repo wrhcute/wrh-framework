@@ -9,7 +9,7 @@ import java.util.List;
  * @author 王瑞鸿
  * @version 1.0.0
  * @ClassName Colls.java
- * @Description TODO
+ * @Description 集合工具类
  * @createTime 2021年12月17日 15:26:00
  */
 public abstract class Colls {
