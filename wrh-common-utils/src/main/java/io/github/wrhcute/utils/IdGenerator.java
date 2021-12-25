@@ -1,5 +1,13 @@
 package io.github.wrhcute.utils;
 
+/**
+ * @author 王瑞鸿
+ * @version 1.0.0
+ * @ClassName IdGenerator.java
+ * @Description id生成器
+ *
+ * @createTime 2021年11月17日 15:26:00
+ */
 public class IdGenerator {
 
     private final long fixed;
