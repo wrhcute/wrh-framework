@@ -71,42 +71,58 @@ public class BiMap<L extends Comparable<L>, R extends Comparable<R>> implements 
 
     @Override
     public R put(L l, R r) {
-        return lput(l,r);
+        List<Entry<L, R>> entries = lput(l, r);
+        return entries.isEmpty() ? null : entries.get(0).getValue();
     }
 
-    public R lput(L l,R r){
-        Entry<L,R> entry = new SimpleEntry(l,r);
-        Entry<L, R> covered = lput0(entry);
+    public List<Entry<L, R>> lput(L l, R r) {
+        List<Entry<L, R>> covered = Colls.fit(ldel(l), rdel(r));
+        Entry<L, R> entry = new SimpleEntry(l, r);
+        lput0(entry);
         rput0(entry);
         keys.add(entry.getKey());
         values.add(entry.getValue());
         entrySet.add(entry);
-        return covered != null ? covered.getValue() : null;
-    }
-
-    public L rput(R r,L l){
-        Entry<L,R> entry = new SimpleEntry(l,r);
-        Entry<L, R> covered = rput0(entry);
-        lput0(entry);
-        keys.add(entry.getKey());
-        values.add(entry.getValue());
-        entrySet.add(entry);
-        return covered != null ? covered.getKey() : null;
+        return covered;
     }
 
     @Override
     public R remove(Object key) {
-        return ldel((L) key);
+        List<Entry<L, R>> del = ldel((L) key);
+        return del.isEmpty() ? null : del.get(0).getValue();
     }
 
-    public R ldel(L l) {
-        Entry<L, R> removed = del0(l2rBucket, r2lBucket, this, l);
-        return removed == null ? null : removed.getValue();
+    public List<Entry<L, R>> ldel(L l) {
+        Entry<L, R> lrm = ldel0(l), rrm;
+        if (lrm != null)
+            rrm = rdel0(lrm.getValue());
+        else
+            rrm = null;
+        return removedEntries(lrm, rrm);
     }
 
-    public L rdel(R r) {
-        Entry<L, R> removed = del0(r2lBucket, l2rBucket, this, r);
-        return removed == null ? null : removed.getKey();
+    public List<Entry<L, R>> rdel(R r) {
+        Entry<L, R> rrm = rdel0(r), lrm;
+        if (rrm != null) {
+            lrm = ldel0(rrm.getKey());
+        } else {
+            lrm = null;
+        }
+        return removedEntries(rrm, lrm);
+    }
+
+
+    private List<Entry<L, R>> removedEntries(Entry<L, R> first, Entry<L, R> second) {
+        List<Entry<L, R>> rs = new ArrayList<>();
+        if (first == second && first != null){
+            rs.add(first);
+        }else{
+            if (first != null)
+                rs.add(first);
+            if (second != null)
+                rs.add(second);
+        }
+        return rs;
     }
 
 
@@ -149,102 +165,97 @@ public class BiMap<L extends Comparable<L>, R extends Comparable<R>> implements 
         return root != null ? root.search(s) : null;
     }
 
-    private static <S1 extends Comparable<S1>
-            , S2 extends Comparable<S2>
-            , K extends Comparable<K>
-            , V extends Comparable<V>> Entry<K, V> del0(
-            BiSortTree<S1, Entry<K, V>>[] bucket,
-            BiSortTree<S2, Entry<K, V>>[] opposite,
-            BiMap<K, V> $this,
-            S1 s) {
-        int mod = Bits.hashMod(s, bucket.length);
-        BiSortTree<S1, Entry<K, V>> root = bucket[mod];
-        if (root == null)
-            return null;
-        Entry<K, V> entry;
-        if (root.getS().equals(s)) {
-            //刚好在头结点
-            bucket[mod] = null;
-            entry = root.getData();
-        } else {
-            entry = root.remove(s);
-        }
-        if (entry != null) {
-            $this.keys.remove(entry.getKey());
-            $this.values.remove(entry.getValue());
-            $this.entrySet.remove(entry);
-            del0(opposite, bucket, $this, (S2) entry.getValue());
-        }
-        return entry;
-    }
-
-    private Entry<L, R> lput0(Entry<L, R> newEntry){
-        int mod = Bits.hashMod(newEntry.getKey(), capacity);
+    private Entry<L, R> ldel0(L l) {
+        int mod = Bits.hashMod(l, l2rBucket.length);
         BiSortTree<L, Entry<L, R>> root = l2rBucket[mod];
         if (root == null) {
-            root = new BiSortTree<>(newEntry.getKey(), newEntry);
-            l2rBucket[mod] = root;
-            if (this.values.contains(newEntry.getValue())){
-                del0(r2lBucket,l2rBucket,this, newEntry.getValue());
+            return null;
+        } else {
+            Entry<L, R> remove;
+            if (root.getS().equals(l)) {
+                remove = root.getData();
+                l2rBucket[mod] = null;
+            } else {
+                remove = root.remove(l);
             }
-        }else{
-            Entry<L, R> old = root.put(newEntry.getKey(), newEntry);
-            if (old != null) {
-                this.entrySet.remove(old);
-                this.values.remove(old.getValue());
-                del0(r2lBucket, l2rBucket, this, old.getValue());
+            if (remove != null) {
+                keys.remove(l);
+                entrySet.remove(remove);
             }
-            return old;
+            return remove;
         }
-        return null;
     }
 
-    private Entry<L, R> rput0(Entry<L, R> newEntry){
-        int mod = Bits.hashMod(newEntry.getValue(), capacity);
+    private Entry<L, R> rdel0(R r) {
+        int mod = Bits.hashMod(r, r2lBucket.length);
         BiSortTree<R, Entry<L, R>> root = r2lBucket[mod];
         if (root == null) {
+            return null;
+        } else {
+            Entry<L, R> remove;
+            if (root.getS().equals(r)) {
+                remove = root.getData();
+                r2lBucket[mod] = null;
+            } else {
+                remove = root.remove(r);
+            }
+            if (remove != null) {
+                values.remove(r);
+                entrySet.remove(remove);
+            }
+            return remove;
+        }
+    }
+
+    private void lput0(Entry<L, R> newEntry) {
+        int mod = Bits.hashMod(newEntry.getKey(), capacity);
+        BiSortTree<L, Entry<L, R>> root;
+        if (l2rBucket[mod] == null) {
+            root = new BiSortTree<>(newEntry.getKey(), newEntry);
+            l2rBucket[mod] = root;
+        } else {
+            root = l2rBucket[mod];
+            root.put(newEntry.getKey(), newEntry);
+        }
+    }
+
+    private void rput0(Entry<L, R> newEntry) {
+        int mod = Bits.hashMod(newEntry.getValue(), capacity);
+        BiSortTree<R, Entry<L, R>> root;
+        if (r2lBucket[mod] == null) {
             root = new BiSortTree<>(newEntry.getValue(), newEntry);
             r2lBucket[mod] = root;
-            if (this.keys.contains(newEntry.getKey())){
-                del0(l2rBucket,r2lBucket,this, newEntry.getKey());
-            }
-        }else{
-            Entry<L, R> old = root.put(newEntry.getValue(), newEntry);
-            if (old != null) {
-                this.entrySet.remove(old);
-                this.keys.remove(old.getKey());
-                del0(l2rBucket, r2lBucket, this, old.getKey());
-            }
-            return old;
+        } else {
+            root = r2lBucket[mod];
+            root.put(newEntry.getValue(), newEntry);
         }
-        return null;
     }
 
 
     public class SimpleEntry implements Entry<L, R> {
 
-        SimpleEntry(L key, R value) {
-            this.key = key;
-            this.value = value;
+        SimpleEntry(L l, R r) {
+            this.l = l;
+            this.r = r;
         }
 
-        private L key;
-        private R value;
+        private L l;
+        private R r;
 
         @Override
         public L getKey() {
-            return key;
+            return l;
         }
 
         @Override
         public R getValue() {
-            return value;
+            return r;
         }
 
         @Override
         public R setValue(R value) {
-            R old = this.value;
-            this.value = value;
+            R old = this.r;
+            this.r = value;
             return old;
         }
 
@@ -253,12 +264,20 @@ public class BiMap<L extends Comparable<L>, R extends Comparable<R>> implements 
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
             SimpleEntry that = (SimpleEntry) o;
-            return Objects.equals(key, that.key) && Objects.equals(value, that.value);
+            return Objects.equals(l, that.l) && Objects.equals(r, that.r);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(key, value);
+            return Objects.hash(l, r);
+        }
+
+        @Override
+        public String toString() {
+            return "BiMap.SimpleEntry{" +
+                    "L=" + l +
+                    ", R=" + r +
+                    '}';
         }
     }
 }

@@ -6,7 +6,7 @@ import java.util.function.Consumer;
  * @author 王瑞鸿
  * @version 1.0.0
  * @ClassName BiSortTree.java
- * @Description 搜索数
+ * @Description 搜索树
  * @createTime 2021年12月20日 14:54:00
  */
 public class BiSortTree<S extends Comparable<S>, D> {
@@ -52,24 +52,24 @@ public class BiSortTree<S extends Comparable<S>, D> {
 
     /**
      *
-     * @param leaf 比较键
+     * @param s 比较键
      * @param data 值
      * @return 如果新建节点则返回null ，没有新建则更新节点,返回覆盖的旧值
      */
-    public D put(S leaf,D data){
-        int compare = this.s.compareTo(leaf);
+    public D put(S s,D data){
+        int compare = this.s.compareTo(s);
         if (compare > 0){
             if (this.left == null){
-                this.left = new BiSortTree<>(leaf,data,this,h + 1);
+                this.left = new BiSortTree<>(s,data,this,h + 1);
                 return null;
             }else
-                return this.left.put(leaf,data);
+                return this.left.put(s,data);
         }else if (compare < 0){
             if (this.right == null) {
-                this.right = new BiSortTree<>(leaf, data, this, h + 1);
+                this.right = new BiSortTree<>(s, data, this, h + 1);
                 return null;
             }else
-                return this.right.put(leaf,data);
+                return this.right.put(s,data);
         }else{
             D old = this.data;
             this.data = data;
