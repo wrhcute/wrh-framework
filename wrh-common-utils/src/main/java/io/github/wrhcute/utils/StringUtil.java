@@ -1,5 +1,7 @@
 package io.github.wrhcute.utils;
 
+import java.util.StringJoiner;
+
 /**
  * @author 王瑞鸿
  * @version 1.0.0
@@ -30,4 +32,21 @@ public abstract class StringUtil {
     public static String repeat(String s , int count){
         return repeat(s,count,EMPTY);
     }
+
+    public static String join(String delimiter,String prefix,String suffix, Object ... members){
+        StringJoiner joiner = new StringJoiner(delimiter,prefix,suffix);
+        for (Object member : members) {
+            joiner.add(member.toString());
+        }
+        return joiner.toString();
+    }
+
+    public static String join(String delimiter, Object ... members){
+        return join(delimiter,EMPTY,EMPTY,members);
+    }
+
+    public static String join(Object ... members){
+        return join(EMPTY,members);
+    }
+
 }

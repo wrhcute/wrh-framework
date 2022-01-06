@@ -1,9 +1,11 @@
 package io.github.wrhcute.utils.time;
 
 import io.github.wrhcute.utils.Asserts;
+import io.github.wrhcute.utils.ExceptionUtil;
 import io.github.wrhcute.utils.Vars;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -50,8 +52,23 @@ public class SmartDate extends Date {
 
     public SmartDate addDay(int day){
         Calendar calender = getCalender();
-        calender.setTime(this);
         calender.add(Calendar.DATE,day);
+        return new SmartDate(calender.getTime());
+    }
+
+    public SmartDate firstDayOfMon(){
+        Calendar calender = getCalender();
+        //获取某月最小天数
+        int actualMinimum = calender.getActualMinimum(Calendar.DAY_OF_MONTH);
+        //设置日历中月份的最小天数
+        calender.set(Calendar.DAY_OF_MONTH, actualMinimum);
+        return new SmartDate(calender.getTime());
+    }
+
+    public SmartDate lastDayOfMon(){
+        Calendar calender = getCalender();
+        int actualMaximum = calender.getActualMaximum(Calendar.DAY_OF_MONTH);
+        calender.set(Calendar.DAY_OF_MONTH, actualMaximum);
         return new SmartDate(calender.getTime());
     }
 
@@ -65,28 +82,31 @@ public class SmartDate extends Date {
         return list;
     }
 
-    public String format(String format){
-        return null;
+    public String format(String pattern){
+        DateFormat dateFormat = new SimpleDateFormat(pattern);
+        return dateFormat.format(this);
     }
 
-    private static SmartDate parse(CharSequence dateStr, DateFormat dateFormat) {
-        Asserts.notNull(dateStr,"dataStr不能为空");
-        try {
-            return new SmartDate(dateFormat.parse(dateStr.toString()));
-        } catch (Exception var4) {
-            String pattern;
-            if (dateFormat instanceof SimpleDateFormat) {
-                pattern = ((SimpleDateFormat)dateFormat).toPattern();
-            } else {
-                pattern = dateFormat.toString();
-            }
+    private static SmartDate parse(CharSequence dateStr, DateFormat dateFormat) throws ParseException {
+        return new SmartDate(dateFormat.parse(dateStr.toString()));
+    }
 
-            throw new RuntimeException(String.format("Parse [%s] with format [%s] error!",dateStr, pattern));
+    public static SmartDate tryParse(String dateStr, String ... patterns) throws ParseException {
+        for (String pattern : patterns) {
+            try {
+                return parse(dateStr,new SimpleDateFormat(pattern));
+            } catch (ParseException ignored) {
+            }
         }
+        throw new ParseException(String.format("转换失败,日期字符串：%s,表达式集合：%s",dateStr,Arrays.toString(patterns)),-1);
+    }
+
+    public static SmartDate tryParse(String dateStr) throws ParseException {
+        return tryParse(dateStr,TimePatternConstant.allPatterns());
     }
 
     @Override
     public String toString() {
-        return "";
+        return format(TimePatternConstant.NORMAL_FULL.pattern);
     }
 }

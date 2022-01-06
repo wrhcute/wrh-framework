@@ -14,10 +14,18 @@ public class StringUtilTest {
 
     @Test
     public void repeatTest(){
-        System.out.println(StringUtil.repeat("s%",5));
-        System.out.println(StringUtil.repeat("s%",1));
-        System.out.println(StringUtil.repeat("s%",0));
-        System.out.println(StringUtil.repeat("",5));
-        System.out.println(StringUtil.repeat("AA",5,","));
+        String s1 = StringUtil.repeat("s%",5);
+        System.out.println("repeat(\"s%\",5) =" + s1);
+        assert "s%s%s%s%s%".equals(s1);
+        assert "s%".equals(StringUtil.repeat("s%",1));
+        assert "".equals(StringUtil.repeat("s%",0));
+        assert "".equals(StringUtil.repeat("",5));
+        assert "AA,AA,AA,AA,AA".equals(StringUtil.repeat("AA",5,","));
+    }
+
+    @Test
+    public void joinTest(){
+        String join = StringUtil.join(",", "{","}",1, 'C', "lov");
+        assert "{1,C,lov}".equals(join);
     }
 }
