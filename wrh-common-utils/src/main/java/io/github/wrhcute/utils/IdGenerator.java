@@ -9,8 +9,7 @@ public class IdGenerator {
 
     public IdGenerator(int fixed) {
         Asserts.isTrue(fixed >= 0 && fixed <= 1024, "fixed必须大于等于0小于等于1024");
-        long tmp = fixed;
-        this.fixed = tmp << 53;
+        this.fixed = (long) fixed << 53;
     }
 
 

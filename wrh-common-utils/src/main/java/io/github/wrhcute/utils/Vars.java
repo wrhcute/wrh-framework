@@ -24,4 +24,8 @@ public class Vars<T> {
     public T getVar() {
         return var == null ? def : var;
     }
+
+    public static <T> T defaultIfNull(T object, T defaultValue) {
+        return null != object ? object : defaultValue;
+    }
 }
