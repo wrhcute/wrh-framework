@@ -40,4 +40,10 @@ public class SmartDateTest {
         System.out.println(new SmartDate().getWeek().toChinese());
     }
 
+    @Test
+    public void testBoundDay(){
+        System.out.println(new SmartDate().firstDayOfWeek());
+        System.out.println(new SmartDate().lastDayOfWeek());
+    }
+
 }

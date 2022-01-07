@@ -1,6 +1,6 @@
 package io.github.wrhcute.utils.time;
 
-import io.github.wrhcute.utils.StringUtil;
+import io.github.wrhcute.utils.StrUtil;
 
 import java.util.Calendar;
 
@@ -37,7 +37,7 @@ public enum Week {
     }
 
     public String toChinese(String weekNamePre) {
-        return StringUtil.joins(weekNamePre,this.chineseSuffix);
+        return StrUtil.joins(weekNamePre,this.chineseSuffix);
     }
 
     public static Week of(int calendarWeekIntValue) {
@@ -46,5 +46,14 @@ public enum Week {
                 return week;
         }
         return null;
+    }
+
+    public Week toggle(int step){
+        int to = this.value + (step % 7 == 0 ? step/ 7 : step /7 + 1);
+        for (Week week : values()) {
+            if (week.value == to)
+                return week;
+        }
+        throw new RuntimeException(Week.class.getCanonicalName() + "成员异常");
     }
 }

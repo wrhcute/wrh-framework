@@ -26,7 +26,7 @@ public abstract class Asserts {
 
     public static void notNullParam(Object param,String ... paramNames){
         notNull(param,Threads.getCallMethodName() +
-                "调用,参数["+StringUtil.repeat("%s", paramNames.length,",")+"]不能为null", (Object) paramNames);
+                "调用,参数["+ StrUtil.repeat("{}", paramNames.length,",")+"]不能为null", (Object[]) paramNames);
     }
 
     public static void isNull(Object obj , String message){
@@ -34,7 +34,7 @@ public abstract class Asserts {
     }
 
     public static void isTrue(boolean expression,String message,Object ... fmtArgs){
-        isTrue(expression , new RuntimeException(String.format(message,fmtArgs)));
+        isTrue(expression , new RuntimeException(StrUtil.format(message,fmtArgs)));
     }
 
     public static void isTrue(boolean expression,Throwable ex){

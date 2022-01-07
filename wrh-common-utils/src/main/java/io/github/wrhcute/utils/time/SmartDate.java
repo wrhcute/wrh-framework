@@ -68,6 +68,18 @@ public class SmartDate extends Date {
         return new SmartDate(calender.getTime());
     }
 
+    public SmartDate firstDayOfWeek(){
+        Calendar calender = getCalender();
+        calender.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+        return new SmartDate(calender.getTime());
+    }
+
+    public SmartDate lastDayOfWeek(){
+        Calendar calender = getCalender();
+        calender.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
+        return new SmartDate(calender.getTime());
+    }
+
     public static List<SmartDate> listDay(Date start, Date end){
         List<SmartDate> list = new ArrayList<>();
         SmartDate tmp = new SmartDate(start), max = new SmartDate(end);
@@ -86,6 +98,10 @@ public class SmartDate extends Date {
     public Week getWeek(){
         Calendar calender = getCalender();
         return Week.of(calender.get(Calendar.DAY_OF_WEEK));
+    }
+
+    public Integer year(){
+        return getCalender().get(Calendar.YEAR);
     }
 
     private static SmartDate parse(CharSequence dateStr, DateFormat dateFormat) throws ParseException {
