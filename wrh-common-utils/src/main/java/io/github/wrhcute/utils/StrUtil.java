@@ -82,7 +82,7 @@ public abstract class StrUtil {
             return s;
         int add = (len - s.length()) / padding.length() + 1;
         String temp = right ? joins(s,repeat(padding,add)) : joins(repeat(padding,add),s);
-        return temp.substring(0,len);
+        return right ? temp.substring(0,len) : temp.substring(temp.length() - len);
     }
 
     public static String paddingLeft(String s, String padding, int len){

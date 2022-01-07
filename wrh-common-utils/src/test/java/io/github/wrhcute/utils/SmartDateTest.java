@@ -15,6 +15,23 @@ import java.util.List;
  */
 public class SmartDateTest {
 
+
+
+    @Test
+    public void test(){
+        System.out.println("getYearNum =" + new SmartDate().getYearNum());
+        System.out.println("getMonNum =" + new SmartDate().getMonNum());
+        System.out.println("getDayNum =" + new SmartDate().getDayNum());
+        System.out.println("getYearMonNum =" + new SmartDate().getYearMonNum());
+        System.out.println("getHourNum =" + new SmartDate().getHourNum());
+        System.out.println("getMinuteNum =" + new SmartDate().getMinuteNum());
+        System.out.println("getSecNum =" + new SmartDate().getSecNum());
+        System.out.println("getHmsNum =" + new SmartDate().getHmsNum());
+        System.out.println("getYmdNum =" + new SmartDate().getYmdNum());
+        System.out.println("getTimeNum =" + new SmartDate().getTimeNum());
+        System.out.println("getWeekNum =" + new SmartDate().getWeekNum());
+    }
+
     @Test
     public void testListDay(){
         SmartDate smartDate = new SmartDate();

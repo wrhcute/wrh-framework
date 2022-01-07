@@ -24,19 +24,18 @@ public enum TimePatternConstant {
     CHINESE("yyyy年MM月dd日HH时mm分ss秒"),
     CHINESE_YMD("yyyy年MM月dd日")
     ;
-
-    public final String pattern;
     TimePatternConstant(String pattern){
         this.pattern = pattern;
     }
 
-    public static String[] allPatterns(){
-        TimePatternConstant[] values = values();
-        String[] patterns = new String[values.length];
-        for (int i = 0; i < values.length; i++) {
-            patterns[i] = values[i].pattern;
+    public final String pattern;
+    public static final String[] allPatterns  = new String[values().length];
+
+
+    static {
+        for (int i = 0; i < values().length; i++) {
+            allPatterns[i] = values()[i].pattern;
         }
-        return patterns;
     }
 
 }

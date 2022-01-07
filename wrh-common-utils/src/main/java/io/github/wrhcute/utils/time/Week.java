@@ -49,11 +49,16 @@ public enum Week {
     }
 
     public Week toggle(int step){
-        int to = this.value + (step % 7 == 0 ? step/ 7 : step /7 + 1);
+        int stepTo;
+        int to = (stepTo = (this.value + step) % 7) == 0 ? 7 : stepTo;
         for (Week week : values()) {
             if (week.value == to)
                 return week;
         }
         throw new RuntimeException(Week.class.getCanonicalName() + "成员异常");
+    }
+
+    public int gap(Week week){
+        return this.value > week.value ? this.value - week.value : this.value - week.value + 7;
     }
 }

@@ -1,5 +1,6 @@
 package io.github.wrhcute.utils.time;
 
+import io.github.wrhcute.utils.StrUtil;
 import io.github.wrhcute.utils.Vars;
 
 import java.text.DateFormat;
@@ -17,22 +18,24 @@ import java.util.*;
 public class SmartDate extends Date {
 
     private final TimeZone timeZone;
+    private final Week headWeek;
 
     public SmartDate() {
         this(System.currentTimeMillis());
     }
 
     public SmartDate(long date){
-      this(date,null);
+      this(date,null,Week.MONDAY);
     }
 
     public SmartDate(Date date){
         this(date.getTime());
     }
 
-    public SmartDate(long date,TimeZone timeZone) {
+    public SmartDate(long date,TimeZone timeZone,Week headWeek) {
         super(date);
         this.timeZone = Vars.defaultIfNull(timeZone,TimeZone.getDefault());
+        this.headWeek = headWeek;
     }
 
     public Calendar getCalendar(Locale locale) {
@@ -70,13 +73,13 @@ public class SmartDate extends Date {
 
     public SmartDate firstDayOfWeek(){
         Calendar calender = getCalender();
-        calender.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+        calender.set(Calendar.DAY_OF_WEEK, headWeek.getValue());
         return new SmartDate(calender.getTime());
     }
 
     public SmartDate lastDayOfWeek(){
         Calendar calender = getCalender();
-        calender.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
+        calender.set(Calendar.DAY_OF_WEEK, headWeek.toggle(6).getValue());
         return new SmartDate(calender.getTime());
     }
 
@@ -100,8 +103,55 @@ public class SmartDate extends Date {
         return Week.of(calender.get(Calendar.DAY_OF_WEEK));
     }
 
-    public Integer year(){
+    public Integer getWeekNum(){
+        return getWeek().gap(headWeek) + 1;
+    }
+
+    public Integer getDayNum(){
+       return getCalender().get(Calendar.DAY_OF_MONTH);
+    }
+
+    public Integer getYearNum(){
         return getCalender().get(Calendar.YEAR);
+    }
+
+    public Integer getMonNum(){
+        return getCalender().get(Calendar.MONTH) + 1;
+    }
+
+    public Integer getYearMonNum(){
+        return Integer.valueOf(StrUtil.joins(getYearNum(),StrUtil.paddingLeft(getMonNum().toString(),"0",2)));
+    }
+
+    public Integer getYmdNum(){
+        return Integer.valueOf(StrUtil.joins(getYearMonNum(),StrUtil.paddingLeft(getDayNum().toString(),"0",2)));
+    }
+
+    public Integer getHourNum(){
+        return getCalender().get(Calendar.HOUR_OF_DAY);
+    }
+
+    public Integer getMinuteNum(){
+        return getCalender().get(Calendar.MINUTE);
+    }
+
+    public Integer getSecNum(){
+        return getCalender().get(Calendar.SECOND);
+    }
+
+    public Integer getHmNum(){
+        String paddingHour = StrUtil.paddingLeft(getHourNum().toString(),"0",2);
+        String paddingMinute = StrUtil.paddingLeft(getMinuteNum().toString(),"0",2);
+        return Integer.valueOf(StrUtil.joins(paddingHour,paddingMinute));
+    }
+
+    public Integer getHmsNum(){
+        String paddingSec =  StrUtil.paddingLeft(getSecNum().toString(),"0",2);
+        return Integer.valueOf(StrUtil.joins(getHmNum(),paddingSec));
+    }
+
+    public Long getTimeNum(){
+        return Long.valueOf(StrUtil.joins(getYmdNum(),getHmsNum()));
     }
 
     private static SmartDate parse(CharSequence dateStr, DateFormat dateFormat) throws ParseException {
@@ -126,7 +176,7 @@ public class SmartDate extends Date {
         }
     }
     public static SmartDate tryParse(String dateStr){
-        return tryParse(dateStr,TimePatternConstant.allPatterns());
+        return tryParse(dateStr,TimePatternConstant.allPatterns);
     }
 
     @Override
