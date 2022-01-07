@@ -1,7 +1,5 @@
 package io.github.wrhcute.utils.time;
 
-import io.github.wrhcute.utils.Asserts;
-import io.github.wrhcute.utils.ExceptionUtil;
 import io.github.wrhcute.utils.Vars;
 
 import java.text.DateFormat;
@@ -19,29 +17,27 @@ import java.util.*;
 public class SmartDate extends Date {
 
     private final TimeZone timeZone;
-    private final Week headWeek;
 
     public SmartDate() {
         this(System.currentTimeMillis());
     }
 
     public SmartDate(long date){
-      this(date,null,null);
+      this(date,null);
     }
 
     public SmartDate(Date date){
         this(date.getTime());
     }
 
-    public SmartDate(long date,TimeZone timeZone,Week headWeek) {
+    public SmartDate(long date,TimeZone timeZone) {
         super(date);
         this.timeZone = Vars.defaultIfNull(timeZone,TimeZone.getDefault());
-        this.headWeek = Vars.defaultIfNull(headWeek,Week.MONDAY);
     }
 
     public Calendar getCalendar(Locale locale) {
         Calendar cal = Calendar.getInstance(timeZone, locale);
-        cal.setFirstDayOfWeek(this.headWeek.getValue());
+        cal.setFirstDayOfWeek(Calendar.MONDAY);
         cal.setTime(this);
         return cal;
     }
@@ -87,11 +83,16 @@ public class SmartDate extends Date {
         return dateFormat.format(this);
     }
 
+    public Week getWeek(){
+        Calendar calender = getCalender();
+        return Week.of(calender.get(Calendar.DAY_OF_WEEK));
+    }
+
     private static SmartDate parse(CharSequence dateStr, DateFormat dateFormat) throws ParseException {
         return new SmartDate(dateFormat.parse(dateStr.toString()));
     }
 
-    public static SmartDate tryParse(String dateStr, String ... patterns) throws ParseException {
+    public static SmartDate parse(String dateStr, String ... patterns) throws ParseException {
         for (String pattern : patterns) {
             try {
                 return parse(dateStr,new SimpleDateFormat(pattern));
@@ -101,7 +102,14 @@ public class SmartDate extends Date {
         throw new ParseException(String.format("转换失败,日期字符串：%s,表达式集合：%s",dateStr,Arrays.toString(patterns)),-1);
     }
 
-    public static SmartDate tryParse(String dateStr) throws ParseException {
+    public static SmartDate tryParse(String dateStr, String ... patterns) {
+        try {
+            return parse(dateStr,patterns);
+        } catch (ParseException e) {
+            return null;
+        }
+    }
+    public static SmartDate tryParse(String dateStr){
         return tryParse(dateStr,TimePatternConstant.allPatterns());
     }
 

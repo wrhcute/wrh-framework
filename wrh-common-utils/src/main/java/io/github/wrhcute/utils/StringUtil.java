@@ -45,7 +45,7 @@ public abstract class StringUtil {
         return join(delimiter,EMPTY,EMPTY,members);
     }
 
-    public static String join(Object ... members){
+    public static String joins(Object ... members){
         return join(EMPTY,members);
     }
 

@@ -27,8 +27,17 @@ public class SmartDateTest {
 
     @Test
     public void testTryParse() throws ParseException {
-        SmartDate date = SmartDate.tryParse("2021-12-01");
-        SmartDate date1 = SmartDate.tryParse("2021/12/01");
+        System.out.println(SmartDate.tryParse("2021-12-01 17:32:01.004"));
+        System.out.println(SmartDate.tryParse("2021-12-01 17:32:01"));
+        System.out.println(SmartDate.tryParse("2021-12-01"));
+        System.out.println(SmartDate.tryParse("2021/12/01 14:32:01.005"));
+        System.out.println(SmartDate.tryParse("2021.12.01 14:32:01.005"));
+    }
+
+
+    @Test
+    public void testGetWeek(){
+        System.out.println(new SmartDate().getWeek().toChinese());
     }
 
 }

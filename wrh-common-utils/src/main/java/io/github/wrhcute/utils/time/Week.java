@@ -1,5 +1,9 @@
 package io.github.wrhcute.utils.time;
 
+import io.github.wrhcute.utils.StringUtil;
+
+import java.util.Calendar;
+
 /**
  * @author 王瑞鸿
  * @version 1.0.0
@@ -8,18 +12,20 @@ package io.github.wrhcute.utils.time;
  * @createTime 2022年01月06日 16:57:00
  */
 public enum Week {
-    SUNDAY(1),
-    MONDAY(2),
-    TUESDAY(3),
-    WEDNESDAY(4),
-    THURSDAY(5),
-    FRIDAY(6),
-    SATURDAY(7);
+    SUNDAY(Calendar.SUNDAY,"日"),
+    MONDAY(Calendar.MONDAY,"一"),
+    TUESDAY(Calendar.TUESDAY,"二"),
+    WEDNESDAY(Calendar.WEDNESDAY,"三"),
+    THURSDAY(Calendar.THURSDAY,"四"),
+    FRIDAY(Calendar.FRIDAY,"五"),
+    SATURDAY(Calendar.SATURDAY,"六");
 
     private final int value;
+    private final String chineseSuffix;
 
-    private Week(int value) {
+    Week(int value,String chineseSuffix) {
         this.value = value;
+        this.chineseSuffix = chineseSuffix;
     }
 
     public int getValue() {
@@ -31,44 +37,14 @@ public enum Week {
     }
 
     public String toChinese(String weekNamePre) {
-        switch(this) {
-            case SUNDAY:
-                return weekNamePre + "日";
-            case MONDAY:
-                return weekNamePre + "一";
-            case TUESDAY:
-                return weekNamePre + "二";
-            case WEDNESDAY:
-                return weekNamePre + "三";
-            case THURSDAY:
-                return weekNamePre + "四";
-            case FRIDAY:
-                return weekNamePre + "五";
-            case SATURDAY:
-                return weekNamePre + "六";
-            default:
-                return null;
-        }
+        return StringUtil.joins(weekNamePre,this.chineseSuffix);
     }
 
     public static Week of(int calendarWeekIntValue) {
-        switch(calendarWeekIntValue) {
-            case 1:
-                return SUNDAY;
-            case 2:
-                return MONDAY;
-            case 3:
-                return TUESDAY;
-            case 4:
-                return WEDNESDAY;
-            case 5:
-                return THURSDAY;
-            case 6:
-                return FRIDAY;
-            case 7:
-                return SATURDAY;
-            default:
-                return null;
+        for (Week week : values()) {
+            if (week.value == calendarWeekIntValue)
+                return week;
         }
+        return null;
     }
 }
