@@ -73,13 +73,13 @@ public class SmartDate extends Date {
 
     public SmartDate firstDayOfWeek(){
         Calendar calender = getCalender();
-        calender.set(Calendar.DAY_OF_WEEK, headWeek.getValue());
+        calender.set(Calendar.DAY_OF_WEEK, headWeek.getCalendarValue());
         return new SmartDate(calender.getTime());
     }
 
     public SmartDate lastDayOfWeek(){
         Calendar calender = getCalender();
-        calender.set(Calendar.DAY_OF_WEEK, headWeek.toggle(6).getValue());
+        calender.set(Calendar.DAY_OF_WEEK, headWeek.toggle(6).getCalendarValue());
         return new SmartDate(calender.getTime());
     }
 

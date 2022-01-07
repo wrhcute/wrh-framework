@@ -20,16 +20,16 @@ public enum Week {
     FRIDAY(Calendar.FRIDAY,"五"),
     SATURDAY(Calendar.SATURDAY,"六");
 
-    private final int value;
+    private final int calendarValue;
     private final String chineseSuffix;
 
-    Week(int value,String chineseSuffix) {
-        this.value = value;
+    Week(int calendarValue, String chineseSuffix) {
+        this.calendarValue = calendarValue;
         this.chineseSuffix = chineseSuffix;
     }
 
-    public int getValue() {
-        return this.value;
+    public int getCalendarValue() {
+        return this.calendarValue;
     }
 
     public String toChinese() {
@@ -40,9 +40,9 @@ public enum Week {
         return StrUtil.joins(weekNamePre,this.chineseSuffix);
     }
 
-    public static Week of(int calendarWeekIntValue) {
+    public static Week of(int calendarWeekValue) {
         for (Week week : values()) {
-            if (week.value == calendarWeekIntValue)
+            if (week.calendarValue == calendarWeekValue)
                 return week;
         }
         return null;
@@ -50,15 +50,15 @@ public enum Week {
 
     public Week toggle(int step){
         int stepTo;
-        int to = (stepTo = (this.value + step) % 7) == 0 ? 7 : stepTo;
+        int to = (stepTo = (this.calendarValue + step) % 7) == 0 ? 7 : stepTo;
         for (Week week : values()) {
-            if (week.value == to)
+            if (week.calendarValue == to)
                 return week;
         }
         throw new RuntimeException(Week.class.getCanonicalName() + "成员异常");
     }
 
     public int gap(Week week){
-        return this.value > week.value ? this.value - week.value : this.value - week.value + 7;
+        return this.calendarValue > week.calendarValue ? this.calendarValue - week.calendarValue : this.calendarValue - week.calendarValue + 7;
     }
 }
