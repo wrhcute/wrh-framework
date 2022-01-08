@@ -16,17 +16,17 @@ public abstract class StrUtil {
     public static final String TAB = "  ";
     public static final String PLACEHOLDER = "\\{}";
 
-    public static String repeat(String s, int count, String spilt) {
+    public static String repeat(String s, int count, String delimiter) {
         if (s == null)
             return null;
         if (count <= 0)
             return EMPTY;
         if (s.length() == 0 || count == 1)
             return s;
-        char[] chars = new char[s.length() * count + spilt.length() * (count - 1)], stepCharArr = (s + spilt).toCharArray();
+        char[] chars = new char[s.length() * count + delimiter.length() * (count - 1)], stepCharArr = (s + delimiter).toCharArray();
         int offset = 0, lastPoint = chars.length - s.length(), stepping = stepCharArr.length;
         while (offset <= lastPoint) {
-            System.arraycopy(stepCharArr, 0, chars, offset, offset == lastPoint ? stepping - spilt.length() : stepping);
+            System.arraycopy(stepCharArr, 0, chars, offset, offset == lastPoint ? stepping - delimiter.length() : stepping);
             offset += stepping;
         }
         return new String(chars);
@@ -93,4 +93,6 @@ public abstract class StrUtil {
     public static String paddingRight(String s, String padding, int len){
         return padding(s,padding,len,true);
     }
+
+
 }
