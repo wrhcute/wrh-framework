@@ -14,7 +14,7 @@ public class AssertsTest {
     @Test
     public void testMessage(){
         try {
-            Asserts.notNullParam(null,"name","age","addr");
+            Asserts.notNullParam(null,"name");
         } catch (Exception e) {
             e.printStackTrace();
         }

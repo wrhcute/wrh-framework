@@ -1,5 +1,6 @@
 package io.github.wrhcute.utils;
 
+import io.github.wrhcute.utils.time.SlidingTimeWindow;
 import org.junit.Test;
 
 import java.time.LocalTime;

@@ -24,9 +24,9 @@ public abstract class Asserts {
         isTrue(obj != null , message ,fmtArgs);
     }
 
-    public static void notNullParam(Object param,String ... paramNames){
+    public static void notNullParam(Object param,String paramName){
         notNull(param,Threads.getCallMethodName() +
-                "调用,参数["+ StrUtil.repeat("{}", paramNames.length,",")+"]不能为null", (Object[]) paramNames);
+                "调用,参数[{}]不能为null", paramName);
     }
 
     public static void isNull(Object obj , String message){

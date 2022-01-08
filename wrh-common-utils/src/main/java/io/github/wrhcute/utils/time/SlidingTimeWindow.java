@@ -1,4 +1,4 @@
-package io.github.wrhcute.utils;
+package io.github.wrhcute.utils.time;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReferenceArray;
