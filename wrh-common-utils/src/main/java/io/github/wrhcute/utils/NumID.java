@@ -4,7 +4,7 @@ package io.github.wrhcute.utils;
  * @author 王瑞鸿
  * @version 1.0.0
  * @ClassName NumID.java
- * @Description id生成器
+ * @Description 数字ID
  *
  * @createTime 2021年11月17日 15:26:00
  */
