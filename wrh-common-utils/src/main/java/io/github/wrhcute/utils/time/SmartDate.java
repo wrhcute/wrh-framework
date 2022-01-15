@@ -158,7 +158,7 @@ public class SmartDate extends Date {
         return new SmartDate(dateFormat.parse(dateStr.toString()));
     }
 
-    private static SmartDate parse(String dateStr, TimePattern ... pattern)throws ParseException{
+    public static SmartDate parse(String dateStr, TimePattern ... pattern)throws ParseException{
         return parse(dateStr, Arrays.stream(pattern).map(p -> p.pattern).toArray(String[]::new));
     }
 
@@ -172,7 +172,7 @@ public class SmartDate extends Date {
         throw new ParseException(String.format("转换失败,日期字符串：%s,表达式集合：%s",dateStr,Arrays.toString(patterns)),-1);
     }
 
-    private static SmartDate tryParse(String dateStr, TimePattern ... pattern){
+    public static SmartDate tryParse(String dateStr, TimePattern ... pattern){
         try {
             return parse(dateStr, Arrays.stream(pattern).map(p -> p.pattern).toArray(String[]::new));
         } catch (ParseException e) {
