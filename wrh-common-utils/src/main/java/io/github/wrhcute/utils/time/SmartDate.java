@@ -158,6 +158,10 @@ public class SmartDate extends Date {
         return new SmartDate(dateFormat.parse(dateStr.toString()));
     }
 
+    private static SmartDate parse(String dateStr, TimePattern ... pattern)throws ParseException{
+        return parse(dateStr, Arrays.stream(pattern).map(p -> p.pattern).toArray(String[]::new));
+    }
+
     public static SmartDate parse(String dateStr, String ... patterns) throws ParseException {
         for (String pattern : patterns) {
             try {
@@ -168,6 +172,14 @@ public class SmartDate extends Date {
         throw new ParseException(String.format("转换失败,日期字符串：%s,表达式集合：%s",dateStr,Arrays.toString(patterns)),-1);
     }
 
+    private static SmartDate tryParse(String dateStr, TimePattern ... pattern){
+        try {
+            return parse(dateStr, Arrays.stream(pattern).map(p -> p.pattern).toArray(String[]::new));
+        } catch (ParseException e) {
+            return null;
+        }
+    }
+
     public static SmartDate tryParse(String dateStr, String ... patterns) {
         try {
             return parse(dateStr,patterns);
@@ -176,11 +188,11 @@ public class SmartDate extends Date {
         }
     }
     public static SmartDate tryParse(String dateStr){
-        return tryParse(dateStr,TimePatternConstant.allPatterns);
+        return tryParse(dateStr, TimePattern.allPatterns);
     }
 
     @Override
     public String toString() {
-        return format(TimePatternConstant.NORMAL_FULL.pattern);
+        return format(TimePattern.NORMAL_FULL.pattern);
     }
 }

@@ -7,7 +7,7 @@ package io.github.wrhcute.utils.time;
  * @Description TODO
  * @createTime 2022年01月06日 15:46:00
  */
-public enum TimePatternConstant {
+public enum TimePattern {
     NORMAL_FULL("yyyy-MM-dd HH:mm:ss.SSS"),
     NORMAL("yyyy-MM-dd HH:mm:ss"),
     NORMAL_YMD("yyyy-MM-dd"),
@@ -24,7 +24,7 @@ public enum TimePatternConstant {
     CHINESE("yyyy年MM月dd日HH时mm分ss秒"),
     CHINESE_YMD("yyyy年MM月dd日")
     ;
-    TimePatternConstant(String pattern){
+    TimePattern(String pattern){
         this.pattern = pattern;
     }
 
