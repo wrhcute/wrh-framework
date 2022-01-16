@@ -20,6 +20,11 @@ public class SmartDate extends Date {
     private final TimeZone timeZone;
     private final Week headWeek;
 
+    private final long SECOND_UNIT = 1000;
+    private final long MINUTE_UNIT = SECOND_UNIT * 60;
+    private final long HOUR_UNIT = MINUTE_UNIT * 60;
+    private final long DAY_UNIT = HOUR_UNIT * 24;
+
     public SmartDate() {
         this(System.currentTimeMillis());
     }
@@ -96,6 +101,10 @@ public class SmartDate extends Date {
     public String format(String pattern){
         DateFormat dateFormat = new SimpleDateFormat(pattern);
         return dateFormat.format(this);
+    }
+
+    public String format(TimePattern pattern){
+        return format(pattern.pattern);
     }
 
     public Week getWeek(){
@@ -191,8 +200,32 @@ public class SmartDate extends Date {
         return tryParse(dateStr, TimePattern.allPatterns);
     }
 
+    public int hourBetween(Date after ,boolean abs){
+        long start ,end;
+        if (abs && after.before(this)){
+            start = after.getTime();
+            end = this.getTime();
+        }else{
+            start = this.getTime();
+            end = after.getTime();
+        }
+        return (int) ((end - start) / HOUR_UNIT);
+    }
+
+    public int hourBetween(Date after){
+        return hourBetween(after,false);
+    }
+
+    public static int hourBetween(Date before ,Date after , boolean abs){
+        return new SmartDate(before).hourBetween(after,abs);
+    }
+
+    public static int hourBetween(Date before ,Date after){
+        return hourBetween(before,after,false);
+    }
+
     @Override
     public String toString() {
-        return format(TimePattern.NORMAL_FULL.pattern);
+        return format(TimePattern.NORMAL_FULL);
     }
 }
