@@ -88,6 +88,24 @@ public class SmartDate extends Date {
         return new SmartDate(calender.getTime());
     }
 
+    public SmartDate firstTimeOfDay(){
+        Calendar calender = getCalender();
+        calender.set(Calendar.HOUR_OF_DAY,0);
+        calender.set(Calendar.MINUTE,0);
+        calender.set(Calendar.SECOND,0);
+        calender.set(Calendar.MILLISECOND,0);
+        return new SmartDate(calender.getTime());
+    }
+
+    public SmartDate lastTimeOfDay(){
+        Calendar calender = getCalender();
+        calender.set(Calendar.HOUR_OF_DAY,23);
+        calender.set(Calendar.MINUTE,59);
+        calender.set(Calendar.SECOND,59);
+        calender.set(Calendar.MILLISECOND,999);
+        return new SmartDate(calender.getTime());
+    }
+
     public static List<SmartDate> listDay(Date start, Date end){
         List<SmartDate> list = new ArrayList<>();
         SmartDate tmp = new SmartDate(start), max = new SmartDate(end);

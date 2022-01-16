@@ -59,8 +59,10 @@ public class SmartDateTest {
 
     @Test
     public void testBoundDay(){
-        System.out.println(new SmartDate().firstDayOfWeek());
-        System.out.println(new SmartDate().lastDayOfWeek());
+        System.out.println("当前周的第一天:" + new SmartDate().firstDayOfWeek());
+        System.out.println("当前周的最后一天:" + new SmartDate().lastDayOfWeek());
+        System.out.println("当前天的第一秒:" + new SmartDate().firstTimeOfDay());
+        System.out.println("当前天的最后一秒:" + new SmartDate().lastTimeOfDay());
     }
 
 }
