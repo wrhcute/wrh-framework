@@ -54,9 +54,15 @@ public class SmartDate extends Date {
         return getCalendar(Locale.getDefault(Locale.Category.FORMAT));
     }
 
-    public SmartDate addDay(int day){
+    public SmartDate offsetDay(int day){
         Calendar calender = getCalender();
         calender.add(Calendar.DATE,day);
+        return new SmartDate(calender.getTime());
+    }
+
+    public SmartDate offsetHour(int hour){
+        Calendar calender = getCalender();
+        calender.add(Calendar.HOUR,hour);
         return new SmartDate(calender.getTime());
     }
 
@@ -111,7 +117,7 @@ public class SmartDate extends Date {
         SmartDate tmp = new SmartDate(start), max = new SmartDate(end);
         while (!tmp.after(max)){
             list.add(tmp);
-            tmp = tmp.addDay(1);
+            tmp = tmp.offsetDay(1);
         }
         return list;
     }
