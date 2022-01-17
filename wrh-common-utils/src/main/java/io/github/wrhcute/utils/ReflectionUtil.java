@@ -1,6 +1,8 @@
 package io.github.wrhcute.utils;
 
 import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author 王瑞鸿
@@ -19,6 +21,11 @@ public abstract class ReflectionUtil {
         } catch (Exception e) {
             throw ExceptionUtil.toRuntime(e);
         }
+    }
+
+    public static List<Field> getDeclaredFields(Class<?> clazz){
+        Field[] fields = clazz.getDeclaredFields();
+        return Arrays.asList(fields);
     }
 
     public static <T> T getDeclaredFieldValue(Class<?> clazz,String fieldName,Object callObj){

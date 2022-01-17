@@ -10,7 +10,7 @@ package io.github.wrhcute.utils;
 public class Vars<T> {
 
     private T var;
-    private T def;
+    private final T def;
 
     public Vars(T var,T def){
         this.var = var;
@@ -23,6 +23,12 @@ public class Vars<T> {
 
     public T getVar() {
         return var == null ? def : var;
+    }
+
+    public T setVar(T var){
+        T old = this.var;
+        this.var = var;
+        return old;
     }
 
     public static <T> T defaultIfNull(T object, T defaultValue) {
