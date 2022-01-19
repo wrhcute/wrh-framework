@@ -1,8 +1,10 @@
 package io.github.wrhcute.utils;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Function;
 
 /**
  * @author 王瑞鸿
@@ -23,9 +25,35 @@ public abstract class ReflectionUtil {
         }
     }
 
+    public static List<Field> getDeclaredFields(Class<?> clazz,Function<Field,Boolean> filter){
+        List<Field> fields = new ArrayList<>();
+        for (Field field : clazz.getDeclaredFields()) {
+            if (filter == null || filter.apply(field)){
+                fields.add(field);
+            }
+        }
+        return fields;
+    }
+
     public static List<Field> getDeclaredFields(Class<?> clazz){
-        Field[] fields = clazz.getDeclaredFields();
-        return Arrays.asList(fields);
+        return getDeclaredFields(clazz,null);
+    }
+
+    public static List<Field> getFields(Class<?> clazz, Function<Field,Boolean> filter){
+        List<Field> fields = new ArrayList<>(getDeclaredFields(clazz, filter));
+        Class<?>[] interfaces = clazz.getInterfaces();
+        Class<?> superclass = clazz.getSuperclass();
+        for (Class<?> interfaceClz : interfaces) {
+            fields.addAll(getFields(interfaceClz,filter));
+        }
+        if (Object.class != superclass){
+            fields.addAll(getFields(superclass,filter));
+        }
+        return fields;
+    }
+
+    public static List<Field> getFields(Class<?> clazz){
+        return getFields(clazz,null);
     }
 
     public static <T> T getDeclaredFieldValue(Class<?> clazz,String fieldName,Object callObj){

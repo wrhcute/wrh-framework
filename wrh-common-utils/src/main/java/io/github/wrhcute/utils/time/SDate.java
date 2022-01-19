@@ -15,7 +15,7 @@ import java.util.*;
  * @Description TODO
  * @createTime 2022年01月06日 11:41:00
  */
-public class SmartDate extends Date {
+public class SDate extends Date {
 
     private final TimeZone timeZone;
     private final Week headWeek;
@@ -25,19 +25,19 @@ public class SmartDate extends Date {
     private final long HOUR_UNIT = MINUTE_UNIT * 60;
     private final long DAY_UNIT = HOUR_UNIT * 24;
 
-    public SmartDate() {
+    public SDate() {
         this(System.currentTimeMillis());
     }
 
-    public SmartDate(long date){
+    public SDate(long date){
       this(date,null,Week.MONDAY);
     }
 
-    public SmartDate(Date date){
+    public SDate(Date date){
         this(date.getTime());
     }
 
-    public SmartDate(long date,TimeZone timeZone,Week headWeek) {
+    public SDate(long date, TimeZone timeZone, Week headWeek) {
         super(date);
         this.timeZone = Vars.defaultIfNull(timeZone,TimeZone.getDefault());
         this.headWeek = headWeek;
@@ -54,67 +54,67 @@ public class SmartDate extends Date {
         return getCalendar(Locale.getDefault(Locale.Category.FORMAT));
     }
 
-    public SmartDate offsetDay(int day){
+    public SDate offsetDay(int day){
         Calendar calender = getCalender();
         calender.add(Calendar.DATE,day);
-        return new SmartDate(calender.getTime());
+        return new SDate(calender.getTime());
     }
 
-    public SmartDate offsetHour(int hour){
+    public SDate offsetHour(int hour){
         Calendar calender = getCalender();
         calender.add(Calendar.HOUR,hour);
-        return new SmartDate(calender.getTime());
+        return new SDate(calender.getTime());
     }
 
-    public SmartDate firstDayOfMon(){
+    public SDate firstDayOfMon(){
         Calendar calender = getCalender();
         //获取某月最小天数
         int actualMinimum = calender.getActualMinimum(Calendar.DAY_OF_MONTH);
         //设置日历中月份的最小天数
         calender.set(Calendar.DAY_OF_MONTH, actualMinimum);
-        return new SmartDate(calender.getTime());
+        return new SDate(calender.getTime());
     }
 
-    public SmartDate lastDayOfMon(){
+    public SDate lastDayOfMon(){
         Calendar calender = getCalender();
         int actualMaximum = calender.getActualMaximum(Calendar.DAY_OF_MONTH);
         calender.set(Calendar.DAY_OF_MONTH, actualMaximum);
-        return new SmartDate(calender.getTime());
+        return new SDate(calender.getTime());
     }
 
-    public SmartDate firstDayOfWeek(){
+    public SDate firstDayOfWeek(){
         Calendar calender = getCalender();
         calender.set(Calendar.DAY_OF_WEEK, headWeek.getCalendarValue());
-        return new SmartDate(calender.getTime());
+        return new SDate(calender.getTime());
     }
 
-    public SmartDate lastDayOfWeek(){
+    public SDate lastDayOfWeek(){
         Calendar calender = getCalender();
         calender.set(Calendar.DAY_OF_WEEK, headWeek.toggle(6).getCalendarValue());
-        return new SmartDate(calender.getTime());
+        return new SDate(calender.getTime());
     }
 
-    public SmartDate firstTimeOfDay(){
+    public SDate firstTimeOfDay(){
         Calendar calender = getCalender();
         calender.set(Calendar.HOUR_OF_DAY,0);
         calender.set(Calendar.MINUTE,0);
         calender.set(Calendar.SECOND,0);
         calender.set(Calendar.MILLISECOND,0);
-        return new SmartDate(calender.getTime());
+        return new SDate(calender.getTime());
     }
 
-    public SmartDate lastTimeOfDay(){
+    public SDate lastTimeOfDay(){
         Calendar calender = getCalender();
         calender.set(Calendar.HOUR_OF_DAY,23);
         calender.set(Calendar.MINUTE,59);
         calender.set(Calendar.SECOND,59);
         calender.set(Calendar.MILLISECOND,999);
-        return new SmartDate(calender.getTime());
+        return new SDate(calender.getTime());
     }
 
-    public static List<SmartDate> listDay(Date start, Date end){
-        List<SmartDate> list = new ArrayList<>();
-        SmartDate tmp = new SmartDate(start), max = new SmartDate(end);
+    public static List<SDate> listDay(Date start, Date end){
+        List<SDate> list = new ArrayList<>();
+        SDate tmp = new SDate(start), max = new SDate(end);
         while (!tmp.after(max)){
             list.add(tmp);
             tmp = tmp.offsetDay(1);
@@ -187,15 +187,15 @@ public class SmartDate extends Date {
         return Long.valueOf(StrUtil.joins(getYmdNum(),StrUtil.paddingLeft(getHmsNum().toString(),"0",6)));
     }
 
-    private static SmartDate parse(CharSequence dateStr, DateFormat dateFormat) throws ParseException {
-        return new SmartDate(dateFormat.parse(dateStr.toString()));
+    private static SDate parse(CharSequence dateStr, DateFormat dateFormat) throws ParseException {
+        return new SDate(dateFormat.parse(dateStr.toString()));
     }
 
-    public static SmartDate parse(String dateStr, TimePattern ... pattern)throws ParseException{
+    public static SDate parse(String dateStr, TimePattern ... pattern)throws ParseException{
         return parse(dateStr, Arrays.stream(pattern).map(p -> p.pattern).toArray(String[]::new));
     }
 
-    public static SmartDate parse(String dateStr, String ... patterns) throws ParseException {
+    public static SDate parse(String dateStr, String ... patterns) throws ParseException {
         for (String pattern : patterns) {
             try {
                 return parse(dateStr,new SimpleDateFormat(pattern));
@@ -205,7 +205,7 @@ public class SmartDate extends Date {
         throw new ParseException(String.format("转换失败,日期字符串：%s,表达式集合：%s",dateStr,Arrays.toString(patterns)),-1);
     }
 
-    public static SmartDate tryParse(String dateStr, TimePattern ... pattern){
+    public static SDate tryParse(String dateStr, TimePattern ... pattern){
         try {
             return parse(dateStr, Arrays.stream(pattern).map(p -> p.pattern).toArray(String[]::new));
         } catch (ParseException e) {
@@ -213,14 +213,14 @@ public class SmartDate extends Date {
         }
     }
 
-    public static SmartDate tryParse(String dateStr, String ... patterns) {
+    public static SDate tryParse(String dateStr, String ... patterns) {
         try {
             return parse(dateStr,patterns);
         } catch (ParseException e) {
             return null;
         }
     }
-    public static SmartDate tryParse(String dateStr){
+    public static SDate tryParse(String dateStr){
         return tryParse(dateStr, TimePattern.allPatterns);
     }
 
@@ -241,7 +241,7 @@ public class SmartDate extends Date {
     }
 
     public static int hourBetween(Date before ,Date after , boolean abs){
-        return new SmartDate(before).hourBetween(after,abs);
+        return new SDate(before).hourBetween(after,abs);
     }
 
     public static int hourBetween(Date before ,Date after){
