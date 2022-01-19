@@ -12,8 +12,8 @@ public class ReflectionTest {
 
     @Test
     public void testGetDeclaredField(){
-        List<Field> declaredFields = Reflections.getFields(Sub.class);
-        for (Field field : declaredFields) {
+        List<Field> fields = Reflections.getFields(Sub.class);
+        for (Field field : fields) {
             System.out.println(field.getName());
         }
     }
