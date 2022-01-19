@@ -184,7 +184,7 @@ public class SmartDate extends Date {
     }
 
     public Long getTimeNum(){
-        return Long.valueOf(StrUtil.joins(getYmdNum(),getHmsNum()));
+        return Long.valueOf(StrUtil.joins(getYmdNum(),StrUtil.paddingLeft(getHmsNum().toString(),"0",6)));
     }
 
     private static SmartDate parse(CharSequence dateStr, DateFormat dateFormat) throws ParseException {
