@@ -2,7 +2,6 @@ package io.github.wrhcute.utils;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 
@@ -13,7 +12,7 @@ import java.util.function.Function;
  * @Description 反射工具类
  * @createTime 2021年12月16日 10:11:00
  */
-public abstract class ReflectionUtil {
+public abstract class Reflections {
 
     public static Field getDeclaredField(Class<?> clazz,String name){
         try {
@@ -21,7 +20,7 @@ public abstract class ReflectionUtil {
             field.setAccessible(true);
             return field;
         } catch (Exception e) {
-            throw ExceptionUtil.toRuntime(e);
+            throw Exceptions.toRuntime(e);
         }
     }
 
@@ -71,7 +70,7 @@ public abstract class ReflectionUtil {
             field.setAccessible(true);
             return (T) field.get(callObj);
         } catch (IllegalAccessException e) {
-            throw ExceptionUtil.toRuntime(e);
+            throw Exceptions.toRuntime(e);
         }
     }
 }

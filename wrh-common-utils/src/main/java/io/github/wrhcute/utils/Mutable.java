@@ -15,9 +15,9 @@ public class Mutable {
     public static Mutable load(Object obj){
         Class<?> clazz = obj.getClass();
         Mutable mutable = new Mutable();
-        List<java.lang.reflect.Field> declaredFields = ReflectionUtil.getDeclaredFields(clazz);
+        List<java.lang.reflect.Field> declaredFields = Reflections.getDeclaredFields(clazz);
         for (java.lang.reflect.Field field : declaredFields) {
-            mutable.fieldMap.put(field.getName(),new Field(clazz,field.getName(),ReflectionUtil.getFieldValue(field,obj)));
+            mutable.fieldMap.put(field.getName(),new Field(clazz,field.getName(), Reflections.getFieldValue(field,obj)));
         }
         return mutable;
     }

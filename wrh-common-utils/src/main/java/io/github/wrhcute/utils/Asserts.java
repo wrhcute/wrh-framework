@@ -44,7 +44,7 @@ public abstract class Asserts {
 
     public static void isTrue(boolean expression, Supplier<Throwable> supplier){
         if (!expression){
-            throw ExceptionUtil.toRuntime(supplier.get());
+            throw Exceptions.toRuntime(supplier.get());
         }
     }
 }

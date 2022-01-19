@@ -1,6 +1,6 @@
 package io.github.wrhcute.utils.reflection;
 
-import io.github.wrhcute.utils.ReflectionUtil;
+import io.github.wrhcute.utils.Reflections;
 import org.junit.Test;
 
 import java.lang.reflect.Field;
@@ -12,7 +12,7 @@ public class ReflectionTest {
 
     @Test
     public void testGetDeclaredField(){
-        List<Field> declaredFields = ReflectionUtil.getFields(Sub.class);
+        List<Field> declaredFields = Reflections.getFields(Sub.class);
         for (Field field : declaredFields) {
             System.out.println(field.getName());
         }

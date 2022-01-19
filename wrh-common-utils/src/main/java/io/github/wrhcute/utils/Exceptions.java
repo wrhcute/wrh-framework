@@ -10,7 +10,7 @@ import java.io.StringWriter;
  * @Description 异常工具类
  * @createTime 2021年12月16日 10:14:00
  */
-public class ExceptionUtil {
+public class Exceptions {
 
     public static RuntimeException toRuntime(Throwable ex){
         return ex instanceof RuntimeException ? ((RuntimeException) ex) : new RuntimeException(ex);

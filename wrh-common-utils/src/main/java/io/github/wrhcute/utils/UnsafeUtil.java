@@ -12,7 +12,7 @@ import sun.misc.Unsafe;
 public final class UnsafeUtil {
 
     // 单例对象
-    private static final Unsafe theUnsafe = ReflectionUtil.getDeclaredStaticFieldValue(Unsafe.class,"theUnsafe");
+    private static final Unsafe theUnsafe = Reflections.getDeclaredStaticFieldValue(Unsafe.class,"theUnsafe");
 
     static Unsafe getInstance(){
         return theUnsafe;
