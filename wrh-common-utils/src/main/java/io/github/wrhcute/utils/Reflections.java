@@ -1,6 +1,9 @@
 package io.github.wrhcute.utils;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
@@ -38,6 +41,15 @@ public abstract class Reflections {
         return getDeclaredFields(clazz,null);
     }
 
+    public static Field getField(Class<?> clazz , String name){
+        List<Field> fields = getFields(clazz, f -> f.getName().equals(name));
+        if (fields == null || fields.isEmpty())
+            return null;
+        if (fields.size() == 1)
+            return fields.get(0);
+        return fields.stream().filter(f -> f.getDeclaringClass() == clazz).findAny().orElseGet(() -> fields.get(0));
+    }
+
     public static List<Field> getFields(Class<?> clazz, Function<Field,Boolean> filter){
         List<Field> fields = new ArrayList<>(getDeclaredFields(clazz, filter));
         Class<?>[] interfaces = clazz.getInterfaces();
@@ -73,4 +85,75 @@ public abstract class Reflections {
             throw Exceptions.toRuntime(e);
         }
     }
+
+    public static void setFieldValue(Field field, Object obj, Object value){
+        try {
+            field.set(obj,value);
+        } catch (IllegalAccessException e) {
+            throw Exceptions.toRuntime(e);
+        }
+    }
+
+    public static <T> T newInstance(Class<T> clazz,Object ... args){
+        Class<?>[] parameterTypes = new Class[args.length];
+        for (int i = 0; i < args.length; i++) {
+            parameterTypes[i] = args[i].getClass();
+        }
+        try {
+            Constructor<T> constructor = getConstructor(clazz,parameterTypes);
+            constructor.setAccessible(true);
+            return constructor.newInstance(args);
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
+           throw Exceptions.toRuntime(e);
+        }
+    }
+
+    public static <T> Constructor<T> getConstructor(Class<T> clazz, Class<?>[] parameterTypes){
+        try {
+            return clazz.getDeclaredConstructor(parameterTypes);
+        } catch (NoSuchMethodException e) {
+            throw Exceptions.toRuntime(e);
+        }
+    }
+
+    public static Method findGetter(Class<?> clazz, String fieldName){
+        Field field = getField(clazz, fieldName);
+        if (field == null)
+            return null;
+        String methodName = StrUtil.underline2Hump("get_" + fieldName);
+        try {
+            return getMethod(clazz,methodName,field.getType());
+        } catch (Exception ignore) {
+            return null;
+        }
+    }
+
+    public static Method findSetter(Class<?> clazz, String fieldName){
+        Field field = getField(clazz, fieldName);
+        if (field == null)
+            return null;
+        String methodName = StrUtil.underline2Hump("set_" + fieldName);
+        try {
+            return getMethod(clazz,methodName,field.getType());
+        } catch (Exception ignore) {
+            return null;
+        }
+    }
+
+    public static Method getMethod(Class<?> clazz,String name,Class<?> ... parameterTypes){
+        try {
+            return clazz.getMethod(name,parameterTypes);
+        } catch (NoSuchMethodException e) {
+            throw Exceptions.toRuntime(e);
+        }
+    }
+
+    public static Object callMethod(Method method, Object obj , Object ... args){
+        try {
+            return method.invoke(obj,args);
+        } catch (IllegalAccessException|InvocationTargetException e) {
+            throw Exceptions.toRuntime(e);
+        }
+    }
+
 }

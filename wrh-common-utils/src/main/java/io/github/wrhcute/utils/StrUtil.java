@@ -1,6 +1,8 @@
 package io.github.wrhcute.utils;
 
 import java.util.StringJoiner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author 王瑞鸿
@@ -15,6 +17,7 @@ public abstract class StrUtil {
     public static final String SPACE = " ";
     public static final String TAB = "  ";
     public static final String PLACEHOLDER = "\\{}";
+    private static final Pattern UNDERLINE_PATTERN = Pattern.compile("_(\\w)");
 
     public static String repeat(String s, int count, String delimiter) {
         if (s == null)
@@ -94,5 +97,14 @@ public abstract class StrUtil {
         return padding(s,padding,len,true);
     }
 
-
+    public static String underline2Hump(String str){
+        str = str.toLowerCase();
+        Matcher matcher = UNDERLINE_PATTERN.matcher(str);
+        StringBuffer sb = new StringBuffer();
+        while (matcher.find()) {
+            matcher.appendReplacement(sb, matcher.group(1).toUpperCase());
+        }
+        matcher.appendTail(sb);
+        return sb.toString();
+    }
 }

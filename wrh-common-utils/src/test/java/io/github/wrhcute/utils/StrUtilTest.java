@@ -44,4 +44,12 @@ public class StrUtilTest {
     public void paddingTest(){
         System.out.println(StrUtil.padding("999","00",4,true));
     }
+
+
+
+    @Test
+    public void underline2HumpTest(){
+        String str = "get_name";
+        assert "getName".equals(StrUtil.underline2Hump(str));
+    }
 }
