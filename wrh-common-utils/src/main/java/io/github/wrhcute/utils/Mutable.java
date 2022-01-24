@@ -4,10 +4,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 @SuppressWarnings("unchecked")
@@ -52,9 +49,9 @@ public class Mutable {
             String name = getPropName(field);
             this.propMap.put(name, new Prop(owner -> {
                 Method getter = Reflections.findGetter(clazz, field.getName());
-                if (getter != null){
-                    return Reflections.callMethod(getter,obj);
-                }else{
+                if (getter != null) {
+                    return Reflections.callMethod(getter, obj);
+                } else {
                     return Reflections.getFieldValue(field, owner);
                 }
             }, obj));
@@ -95,8 +92,8 @@ public class Mutable {
                 if (targetType == sourceType || sourceType.isAssignableFrom(targetType)) {
                     Object targetValue = prop.originValue();
                     setTargetField(field, instance, targetValue);
-                } else if (!strict){
-                    Object targetValue = tryConvert(prop.originValue(),field.getType());
+                } else if (!strict) {
+                    Object targetValue = tryConvert(prop.originValue(), field.getType());
                     setTargetField(field, instance, targetValue);
                 }
             }
@@ -114,29 +111,93 @@ public class Mutable {
         }
     }
 
-    private static <T> T tryConvert(Object obj , Class<T> target){
+    private static Object tryConvert(Object obj, Class<?> target) {
         Class<?> clz = obj.getClass();
-        if (target == String.class){
-            Method toString = Reflections.getMethod(clz,"toString");
+        if (clz.isAssignableFrom(target)) {
+            return obj;
+        } else if (target == String.class) {
+            Method toString = Reflections.getMethod(clz, "toString");
             if (toString.getDeclaringClass() != Object.class)//有重写toString
-                return (T) obj.toString();
-        }else if (target.isAssignableFrom(Number.class)){
-            if (clz.isAssignableFrom(Number.class)){
+                return obj.toString();
+        } else if (target.isAssignableFrom(Number.class)) {
+            Class<? extends Number> numClzTarget = (Class<? extends Number>) target;
+            if (clz.isAssignableFrom(Number.class)) {
                 Number number = ((Number) obj);
-                return (T) numberConvert(number,(Class<? extends Number>) target);
-            }else if (clz.isArray()){
-                return (T)Integer.valueOf(((Object[]) obj).length);
-            }else if (clz.isAssignableFrom(Collection.class)){
-                int size = ((Collection) obj).size();
-                return Integer.valueOf(size);
+                return numberConvert(number, numClzTarget);
+            } else if (clz.isArray()) {
+                int length = ((Object[]) obj).length;
+                return numberConvert(length, numClzTarget);
+            } else if (clz.isAssignableFrom(Collection.class)) {
+                int size = ((Collection<?>) obj).size();
+                return numberConvert(size, numClzTarget);
             }
+        } else if (target.isAssignableFrom(Collection.class)) {
+            Class<? extends Collection<Object>> collClzTarget = (Class<? extends Collection<Object>>) target;
+            if (obj instanceof Collection) {
+                return collConvert((Collection<?>) obj, collClzTarget);
+            } else if (obj instanceof Map) {
+                Collection<?> collection = ((Map<?, ?>) obj).values();
+                return collConvert(collection, collClzTarget);
+            } else if (clz.isArray()) {
+                Object[] arr = (Object[]) obj;
+                Collection<?> collection = Arrays.asList(arr);
+                return collConvert(collection, collClzTarget);
+            } else if (clz == String.class) {
+                String[] splits = ",;、 ".split("");
+                int k = 0, max = 0;
+                for (int i = 0; i < splits.length; i++) {
+                    int total = StrUtil.totalSub(obj.toString(), splits[i]);
+                    if (max < total) {
+                        max = total;
+                        k = i;
+                    }
+                }
+                if (max != 0) {
+                    return collConvert(Arrays.asList(obj.toString().split(splits[k])), collClzTarget);
+                }
+            } else if (target.isArray()) {
+                Class<?> componentType = target.getComponentType();
+                if (Reflections.isArray(obj)){
+                    Class<?> clzComponentType = clz.getComponentType();
+                    int len = Reflections.getArrayLength(obj);
+                    if (clzComponentType.isAssignableFrom(componentType)){
+                        return obj;
+                    }else{
 
+                    }
+
+                }else if (obj instanceof Iterable){
+                    Iterable<?> iterable = (Iterable<?>) obj;
+                    List<Object> list = new ArrayList<>();
+                    for (Object o : iterable) {
+                        Object convert = tryConvert(o, componentType);
+                        if (convert != null)
+                            list.add(convert);
+                    }
+                    if (!list.isEmpty())
+                        return list.toArray();
+                }else{
+                    Object o = tryConvert(obj, componentType);
+                    if (o != null){
+                        Object[] array = Reflections.newArray(componentType, 1);
+                        array[0] = o;
+                        return array;
+                    }
+                }
+
+            }
         }
         return null;
     }
 
 
-    private static <T extends Number> T numberConvert(Number number ,Class<T> target){
+    private static <T extends Collection<Object>> T collConvert(Collection<?> coll, Class<T> target) {
+        T instance = Reflections.newInstance(target);
+        instance.addAll(coll);
+        return instance;
+    }
+
+    private static <T extends Number> T numberConvert(Number number, Class<T> target) {
         if (target == Long.class || target == long.class)
             return (T) Long.valueOf(number.longValue());
         else if (target == Integer.class || target == int.class)
@@ -152,21 +213,21 @@ public class Mutable {
         else if (target == BigDecimal.class)
             return (T) BigDecimal.valueOf(number.doubleValue());
         else
-            throw new ClassCastException(number.getClass().getSimpleName() + "不能转换为" + target.getSimpleName());
+            return null;
     }
 
     private static class Prop {
-        private final Function<Object, Object> sourceFunc;
+        private final Function<Object, Object> originProvider;
 
         private final Object owner;
 
-        public Prop(Function<Object, Object> sourceFunc, Object owner) {
-            this.sourceFunc = sourceFunc;
+        public Prop(Function<Object, Object> originProvider, Object owner) {
+            this.originProvider = originProvider;
             this.owner = owner;
         }
 
         Object originValue() {
-            return sourceFunc.apply(owner);
+            return originProvider.apply(owner);
         }
 
     }

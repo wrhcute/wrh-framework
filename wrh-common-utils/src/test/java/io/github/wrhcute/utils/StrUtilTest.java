@@ -52,4 +52,22 @@ public class StrUtilTest {
         String str = "get_name";
         assert "getName".equals(StrUtil.underline2Hump(str));
     }
+
+
+    @Test
+    public void totalSubTest(){
+        assert 1 == StrUtil.totalSub("","");
+        assert 0 == StrUtil.totalSub("","1");
+        assert 2 == StrUtil.totalSub("1,2,3",",");
+        assert 0 == StrUtil.totalSub("1,2,3"," ");
+        assert 6 == StrUtil.totalSub("1,2,3","");
+        assert 3 == StrUtil.totalSub("  ","");
+        assert 2 == StrUtil.totalSub("  "," ");
+    }
+
+
+    @Test
+    public void test(){
+        System.out.println(Integer[].class.isAssignableFrom(Number[].class));
+    }
 }

@@ -1,11 +1,9 @@
 package io.github.wrhcute.utils;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.lang.reflect.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 /**
@@ -15,6 +13,7 @@ import java.util.function.Function;
  * @Description 反射工具类
  * @createTime 2021年12月16日 10:11:00
  */
+@SuppressWarnings("unchecked")
 public abstract class Reflections {
 
     public static Field getDeclaredField(Class<?> clazz,String name){
@@ -108,7 +107,32 @@ public abstract class Reflections {
         }
     }
 
-    public static <T> Constructor<T> getConstructor(Class<T> clazz, Class<?>[] parameterTypes){
+    public static <T> T[] newArray(Class<T> componentType, int len){
+        return (T[]) Array.newInstance(componentType, len);
+    }
+
+    public static void setArray(Object array, int index,Object value){
+        Array.set(array,index,value);
+    }
+
+    public static boolean isArray(Object obj){
+        return obj.getClass().isArray();
+    }
+
+    public static int getArrayLength(Object array){
+        return Array.getLength(array);
+    }
+
+
+    public static void arrayForeach(Object array , BiConsumer<Integer,Object> consumer){
+        int length = getArrayLength(array);
+        for (int i = 0; i < length; i++) {
+             Object component = Array.get(array, i);
+             consumer.accept(i,component);
+        }
+    }
+
+    public static <T> Constructor<T> getConstructor(Class<T> clazz, Class<?>... parameterTypes){
         try {
             return clazz.getDeclaredConstructor(parameterTypes);
         } catch (NoSuchMethodException e) {

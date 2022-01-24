@@ -107,4 +107,18 @@ public abstract class StrUtil {
         matcher.appendTail(sb);
         return sb.toString();
     }
+
+
+    public static int totalSub(String str , String sub){
+        if (str == null || sub == null)
+            return 0;
+        if (EMPTY.equals(sub))
+            return str.length() + 1;
+        Pattern pattern = Pattern.compile(sub);
+        Matcher matcher = pattern.matcher(str);
+        int total = 0;
+        while (matcher.find())
+            ++total;
+        return total;
+    }
 }
