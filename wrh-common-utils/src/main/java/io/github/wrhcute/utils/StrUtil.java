@@ -26,10 +26,12 @@ public abstract class StrUtil {
             return EMPTY;
         if (s.length() == 0 || count == 1)
             return s;
-        char[] chars = new char[s.length() * count + delimiter.length() * (count - 1)], stepCharArr = (s + delimiter).toCharArray();
+        char[] chars = new char[s.length() * count + delimiter.length() * (count - 1)]
+                , stepCharArr = (s + delimiter).toCharArray();
         int offset = 0, lastPoint = chars.length - s.length(), stepping = stepCharArr.length;
         while (offset <= lastPoint) {
-            System.arraycopy(stepCharArr, 0, chars, offset, offset == lastPoint ? stepping - delimiter.length() : stepping);
+            System.arraycopy(stepCharArr, 0, chars, offset, offset == lastPoint
+                    ? stepping - delimiter.length() : stepping);
             offset += stepping;
         }
         return new String(chars);
