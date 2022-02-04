@@ -42,7 +42,7 @@ public abstract class Reflections {
 
     public static Field getField(Class<?> clazz , String name){
         List<Field> fields = getFields(clazz, f -> f.getName().equals(name));
-        if (fields == null || fields.isEmpty())
+        if (fields.isEmpty())
             return null;
         if (fields.size() == 1)
             return fields.get(0);
