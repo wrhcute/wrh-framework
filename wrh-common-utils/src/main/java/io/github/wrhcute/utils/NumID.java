@@ -13,7 +13,7 @@ public class NumID {
     private final long fixed;
     private volatile long lastTimestamp = System.currentTimeMillis();
     private volatile int seq = 0;
-    private static final int MAX_SEQ = 4096; //2的12次方
+    private static final int MAX_SEQ = 1 << 12; //2的12次方
 
     public NumID(int fixed) {
         Asserts.isTrue(fixed >= 0 && fixed <= 1024, "fixed必须大于等于0小于等于1024");

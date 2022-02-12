@@ -34,4 +34,11 @@ public class NumIDTest {
             e.printStackTrace();
         }
     }
+
+
+
+    @Test
+    public void test1(){
+        System.out.println(1 << 12);
+    }
 }
