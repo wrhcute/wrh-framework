@@ -1,9 +1,6 @@
 package io.github.wrhcute.utils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author 王瑞鸿
@@ -35,5 +32,16 @@ public abstract class Colls {
             }
             return new ArrayList<>(c);
         }
+    }
+
+
+    /**
+     * 快排 ,时间复杂度 n*logn ,不稳定
+     * @param list
+     * @param comparator
+     * @param <T>
+     */
+    public static <T> void qSort(List<T> list , Comparator<T> comparator){
+
     }
 }

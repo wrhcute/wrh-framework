@@ -9,9 +9,7 @@ import java.util.function.Consumer;
  * @Description 搜索树
  * @createTime 2021年12月20日 14:54:00
  */
-public class BiSortTree<S extends Comparable<S>, D> {
-
-    private final BiSortTree<S,D> parent;
+public class BiSortTree<S, D> {
 
     private BiSortTree<S, D> left;
 
@@ -30,7 +28,6 @@ public class BiSortTree<S extends Comparable<S>, D> {
         this.s = s;
         this.data = data;
         this.h = h;
-        this.parent = parent;
     }
 
 
@@ -50,6 +47,15 @@ public class BiSortTree<S extends Comparable<S>, D> {
         return data;
     }
 
+
+    private static <T> int compare(T a , T b){
+        if (a instanceof Comparable && b instanceof Comparable){
+            return ((Comparable<T>) a).compareTo(b);
+        }else{
+            return Integer.compare(a.hashCode(),b.hashCode());
+        }
+    }
+
     /**
      *
      * @param s 比较键
@@ -57,7 +63,8 @@ public class BiSortTree<S extends Comparable<S>, D> {
      * @return 如果新建节点则返回null ，没有新建则更新节点,返回覆盖的旧值
      */
     public D put(S s,D data){
-        int compare = this.s.compareTo(s);
+        Asserts.isTrue(h == 0,"根节点才允许put数据");
+        int compare = compare(this.s,s);
         if (compare > 0){
             if (this.left == null){
                 this.left = new BiSortTree<>(s,data,this,h + 1);
@@ -78,7 +85,7 @@ public class BiSortTree<S extends Comparable<S>, D> {
     }
 
     public BiSortTree<S,D> searchTree(S s){
-        int compare = this.s.compareTo(s);
+        int compare = compare(this.s,s);
         if (compare > 0){
             return this.left == null ? null : this.left.searchTree(s);
         }else if (compare < 0){
@@ -93,44 +100,55 @@ public class BiSortTree<S extends Comparable<S>, D> {
         return tree == null ? null : tree.data;
     }
 
-    public BiSortTree<S,D> removeTree(S s){
-        BiSortTree<S, D> tree = searchTree(s);
-        if (tree != null){
-            Asserts.isFalse(tree.h == 0,"root节点不允许移除");
-            BiSortTree<S, D> parent = tree.parent;
-            if (parent.left == tree){
-                parent.left = null;
-            }else{
-                parent.right = null;
-            }
-            return tree;
+
+
+    public void traversePre(Consumer<BiSortTree<S,D>> consumer){
+        consumer.accept(this);
+        if (left != null)
+            left.traversePre(consumer);
+        if (right != null)
+            right.traversePre(consumer);
+    }
+
+    public void traversePost(Consumer<BiSortTree<S,D>> consumer){
+        if (left != null)
+            left.traversePost(consumer);
+        consumer.accept(this);
+        if (right != null)
+            right.traversePost(consumer);
+    }
+
+    public void traverseAfter(Consumer<BiSortTree<S,D>> consumer){
+        if (left != null)
+            left.traverseAfter(consumer);
+        if (right != null)
+            right.traverseAfter(consumer);
+        consumer.accept(this);
+    }
+
+    public void traverseLevel(Consumer<BiSortTree<S,D>> consumer){
+        CircularQueue<BiSortTree<S,D>> queue = new CircularQueue<>(5);
+        queue.offer(this);
+        while (queue.size() > 0){
+            BiSortTree<S,D> pop = queue.poll();
+            consumer.accept(pop);
+            if(pop.left != null)
+                queue.offer(pop.left);
+            if (pop.right != null)
+                queue.offer(pop.right);
         }
+    }
+
+
+
+    public D remove(S s){
+
         return null;
     }
 
-    public void traverse(Consumer<BiSortTree<S,D>> consumer){
-        consumer.accept(this);
-        if (left != null){
-            left.traverse(consumer);
-        }
-        if (right != null)
-            right.traverse(consumer);
-    }
+    public BiSortTree<S,D> removeTree(S s){
 
-    public D remove(S s){
-        BiSortTree<S, D> tree = searchTree(s);
-        if (tree != null){
-            Asserts.isFalse(tree.h == 0,"root节点不允许移除");
-            BiSortTree<S, D> parent = tree.parent , left = tree.left , right = tree.right;
-           if (tree == parent.left){
-               parent.left = left;
-               right.traverse(b -> parent.put(b.s,b.data));
-           }else{
-               parent.right = right;
-               left.traverse(b -> parent.put(b.s,b.data));
-           }
-        }
-        return tree != null ? tree.data : null;
+        return null;
     }
 
 }
