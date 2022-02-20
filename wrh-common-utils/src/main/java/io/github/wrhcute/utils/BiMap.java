@@ -167,16 +167,16 @@ public class BiMap<L extends Comparable<L>, R extends Comparable<R>> implements 
 
     private Entry<L, R> ldel0(L l) {
         int mod = Bits.hashMod(l, l2rBucket.length);
-        BiSortTree<L, Entry<L, R>> root = l2rBucket[mod];
-        if (root == null) {
+        BiSortTree<L, Entry<L, R>> tree = l2rBucket[mod];
+        if (tree == null) {
             return null;
         } else {
             Entry<L, R> remove;
-            if (root.getS().equals(l)) {
-                remove = root.getData();
+            if (tree.getRoot().getS().equals(l)) {
+                remove = tree.getRoot().getData();
                 l2rBucket[mod] = null;
             } else {
-                remove = root.remove(l);
+                remove = tree.remove(l);
             }
             if (remove != null) {
                 keys.remove(l);
@@ -193,8 +193,8 @@ public class BiMap<L extends Comparable<L>, R extends Comparable<R>> implements 
             return null;
         } else {
             Entry<L, R> remove;
-            if (root.getS().equals(r)) {
-                remove = root.getData();
+            if (root.getRoot().getS().equals(r)) {
+                remove = root.getRoot().getData();
                 r2lBucket[mod] = null;
             } else {
                 remove = root.remove(r);
