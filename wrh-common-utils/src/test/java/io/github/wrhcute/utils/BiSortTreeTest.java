@@ -19,8 +19,8 @@ public class BiSortTreeTest {
         biSortTree.put(1,1);
         biSortTree.put(6,1);
         biSortTree.put(3,3);
-        final BiSortTree<Integer,Integer> tree = biSortTree.searchTree(3);
-        assert tree.getS() == 3;
+        final BiSortTree<Integer, Integer>.Node node = biSortTree.searchNode(3);
+        assert node.getS() == 3;
     }
 
     @Test

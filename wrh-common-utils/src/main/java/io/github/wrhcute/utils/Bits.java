@@ -9,9 +9,9 @@ public abstract class Bits {
     }
 
     //传入数值是否为2的幂次方数
-    public static boolean isPowerOf2(int num) {
-        int abs = Math.abs(num);
-        return abs != 1 && (abs & (abs - 1)) == 0;
+    public static boolean isPowerOf2(long num) {
+        long abs;
+        return ((abs = Math.abs(num)) & (abs - 1)) == 0;
     }
 
     //获得一个更为松散的hash值
