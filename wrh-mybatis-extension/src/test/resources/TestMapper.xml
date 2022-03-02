@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "D:\idea-workspace\wrh-framework\wrh-mybatis-extension\src\test\resources\mybatis-3.m-mapper.dtd">
+<mapper namespace="test">
+
+    <sql id="testSql">
+        where 1 = 1
+    </sql>
+    <fsql id="concat" argClass="java.util.Collection">
+        concat(
+            <foreach collection="arg" separator="," item="item">
+                #{item}
+            </foreach>
+        )
+    </fsql>
+
+    <fsql id="in" argClass="java.util.Collection">
+        in(
+            <foreach collection="arg" separator="," item="item">
+                #{item}
+            </foreach>
+        )
+    </fsql>
+
+    <select id="selectOrderByIds" resultType="map">
+        select * from open_order.order_sale where id <callfsql fsql="in" arg="ids"/>
+    </select>
+</mapper>
