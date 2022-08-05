@@ -1,6 +1,7 @@
 package io.github.wrhcute.utils;
 
 import io.github.wrhcute.utils.time.SDate;
+import io.github.wrhcute.utils.time.Week;
 import org.junit.Test;
 
 import java.text.ParseException;
@@ -55,6 +56,9 @@ public class SDateTest {
     @Test
     public void testGetWeek(){
         System.out.println(new SDate().getWeek().toChinese());
+        System.out.println(new SDate().getWeek().gap(Week.MONDAY));
+        System.out.println(new SDate().getWeek().toggle(3));
+        System.out.println(Week.MONDAY.gap(Week.SUNDAY));
     }
 
     @Test

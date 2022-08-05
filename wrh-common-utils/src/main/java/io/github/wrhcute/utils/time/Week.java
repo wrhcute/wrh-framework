@@ -59,7 +59,6 @@ public enum Week {
     }
 
     public int gap(Week week){
-        return this.calendarValue >= week.calendarValue ? this.calendarValue - week.calendarValue
-                : this.calendarValue - week.calendarValue + 7;
+        return (week.calendarValue + 7 - this.calendarValue) % 7 - 1;
     }
 }
