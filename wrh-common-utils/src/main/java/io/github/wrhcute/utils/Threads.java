@@ -13,8 +13,8 @@ public abstract class Threads {
     public static String getCallMethodName(){
         StackTraceElement[] elements = Thread.currentThread().getStackTrace();
         if (elements.length < 4)
-            return "unknown";
-        return elements[3].getMethodName();
+            return "main";
+        return elements[3].getClassName()+"#" + elements[3].getMethodName();
     }
 
     public static void setUncaughtExceptionHandler(Thread.UncaughtExceptionHandler handler){
@@ -22,4 +22,11 @@ public abstract class Threads {
     }
 
 
+    public static void main(String[] args) {
+        test();
+    }
+
+    public static void test(){
+        System.out.println(getCallMethodName());
+    }
 }
